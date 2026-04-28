@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家屋調査報告書</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c5f8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="家屋調査">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js');
+  }
+</script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Hiragino Mincho ProN", "游明朝", "MS Mincho", serif; font-size: 11pt; color: #111; background: #eef2f5; }
+  .page { max-width: 210mm; margin: 0 auto; background: #fff; padding: 16px; }
+  h1 { text-align: center; font-size: 15pt; letter-spacing: 0.15em; border-bottom: 3px double #333; padding-bottom: 6px; margin-bottom: 10px; }
+  .header-info { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px 24px; margin-bottom: 14px; font-size: 10pt; }
+  .header-info span { display: flex; align-items: center; gap: 4px; }
+  input.inline { border: none; border-bottom: 1px solid #999; outline: none; font-size: 10pt; font-family: inherit; width: 130px; padding: 2px 4px; background: transparent; }
+  .section { margin-bottom: 14px; }
+  .section-title { background: #2c5f8a; color: #fff; padding: 5px 10px; font-size: 10.5pt; font-weight: bold; margin-bottom: 6px; border-radius: 3px; }
+  table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+  table td, table th { border: 1px solid #999; padding: 4px 6px; vertical-align: top; }
+  table th { background: #dce8f3; font-weight: bold; white-space: nowrap; width: 30%; }
+  input.cell, textarea.cell { width: 100%; border: none; outline: none; font-size: 10pt; font-family: inherit; background: transparent; resize: vertical; padding: 2px; }
+  input.cell:focus, textarea.cell:focus { background: #f0f7ff; border-radius: 2px; }
+  textarea.tall { min-height: 56px; display: block; }
+
+  /* 寸法フォーム */
+  .dim-block { padding: 8px; }
+  .dim-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 8px; font-size: 10pt; line-height: 1.8; }
+  .dim-row label { white-space: nowrap; }
+  input.num { border: none; border-bottom: 1px solid #888; width: 54px; text-align: center; font-size: 10pt; font-family: inherit; outline: none; padding: 1px 2px; background: transparent; }
+  input.num:focus { background: #f0f7ff; }
+  .radio-group { display: flex; gap: 14px; align-items: center; }
+  .radio-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap; }
+  .radio-group input[type=radio] { width: 16px; height: 16px; cursor: pointer; }
+
+  /* 問題点・提案 */
+  .notes-block { padding: 8px; border-top: 1px solid #ddd; }
+  .notes-label { font-size: 9.5pt; font-weight: bold; color: #444; margin-bottom: 4px; }
+  .none-check { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 10pt; cursor: pointer; }
+  .none-check input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; }
+  textarea.note-ta { width: 100%; border: 1px solid #ccc; border-radius: 3px; font-size: 10pt; font-family: inherit; padding: 4px 6px; resize: vertical; min-height: 50px; outline: none; }
+  textarea.note-ta:focus { background: #f0f7ff; }
+
+  /* 各室ブロック */
+  .room-block { border: 1px solid #aac; border-radius: 4px; margin-bottom: 12px; overflow: hidden; }
+  .room-block-title { background: #4a7fa8; color: #fff; padding: 6px 10px; font-size: 10.5pt; font-weight: bold; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+  .room-title-text { flex: 1; }
+  input.room-title-input { flex: 1; background: rgba(255,255,255,0.2); border: none; border-bottom: 1px solid rgba(255,255,255,0.7); color: #fff; font-size: 10.5pt; font-weight: bold; font-family: inherit; outline: none; padding: 2px 4px; }
+  input.room-title-input::placeholder { color: rgba(255,255,255,0.6); }
+  .room-del-btn { background: none; border: none; color: #fff; font-size: 18pt; cursor: pointer; line-height: 1; padding: 0 4px; opacity: 0.85; touch-action: manipulation; flex-shrink: 0; }
+  .room-inner { display: flex; flex-direction: column; }
+  .room-left { border-bottom: 1px solid #ddd; }
+  .room-right { padding: 8px; }
+  .room-sub { font-size: 9.5pt; color: #444; font-weight: bold; margin-bottom: 5px; }
+
+  /* 写真 */
+  .photo-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; min-height: 10px; }
+  .photo-thumb { position: relative; width: 250px; height: 250px; }
+  .photo-thumb img { width: 250px; height: 250px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px; display: block; }
+  .photo-thumb .del-btn { position: absolute; top: -6px; right: -6px; background: #c0392b; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 13px; cursor: pointer; line-height: 22px; text-align: center; padding: 0; touch-action: manipulation; }
+  .photo-thumb .edit-btn { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 3px; font-size: 9pt; padding: 2px 6px; cursor: pointer; touch-action: manipulation; }
+
+  /* アノテーションモーダル */
+  #anno-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
+  #anno-modal.open { display: flex; }
+  #anno-wrap { position: relative; max-width: 96vw; max-height: 80vh; }
+  #anno-canvas { display: block; max-width: 96vw; max-height: 72vh; cursor: crosshair; touch-action: none; border: 2px solid #fff; border-radius: 4px; }
+  .anno-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 4px; width: 100%; max-width: 96vw; }
+  .anno-toolbar button { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 10pt; touch-action: manipulation; }
+  .tool-btn { background: #555; color: #fff; }
+  .tool-btn.active { background: #e67e22; }
+  .anno-color { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; touch-action: manipulation; }
+  .anno-save-btn { background: #2a7a4b; color: #fff; margin-left: auto; }
+  .anno-cancel-btn { background: #888; color: #fff; }
+  .anno-undo-btn { background: #555; color: #fff; }
+  input[type=file] { display: none; }
+  .photo-btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .add-photo-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 10pt; color: #fff; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; touch-action: manipulation; }
+  .btn-gallery { background: #2c5f8a; }
+  .btn-camera  { background: #2a7a4b; }
+
+  /* 復元バー */
+  #restore-bar { background: #f5f0e8; border: 1px solid #ccc; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; display: none; }
+  .restore-label { font-size: 9.5pt; color: #555; margin-bottom: 6px; }
+  .restore-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+  .restore-btn { font-size: 9.5pt; background: #fff; border: 1px solid #4a7fa8; color: #2c5f8a; padding: 6px 12px; border-radius: 4px; cursor: pointer; touch-action: manipulation; }
+
+  .add-room-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px; background: #fff; border: 2px dashed #4a7fa8; color: #2c5f8a; font-size: 10.5pt; border-radius: 4px; cursor: pointer; touch-action: manipulation; margin-top: 4px; font-family: inherit; }
+  .btn-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 16px; }
+  .btn-bar button { padding: 12px 20px; font-size: 13px; border: none; border-radius: 6px; cursor: pointer; color: #fff; touch-action: manipulation; flex: 1; min-width: 130px; max-width: 200px; font-family: inherit; }
+  .btn-print { background: #2c5f8a; }
+  .btn-pdf   { background: #8a2c2c; }
+  .btn-save  { background: #2a7a4b; }
+
+  @media (min-width: 600px) {
+    .page { padding: 20px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin: 10px auto; border-radius: 4px; }
+    .room-inner { flex-direction: row; }
+    .room-left { border-bottom: none; border-right: 1px solid #ddd; flex: 1; }
+    .room-right { flex: 1; }
+  }
+  @media print {
+    body { background: #fff; }
+    .page { box-shadow: none; margin: 0; padding: 12mm 15mm; }
+    .no-print { display: none !important; }
+    input.cell, textarea.cell, input.inline, input.room-title-input, input.num, textarea.note-ta { border: none !important; }
+    .room-block { break-inside: avoid; page-break-inside: avoid; }
+    .notes-block { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>家　屋　調　査　報　告　書</h1>
+
+  <div class="header-info">
+    <span>作成日：<input class="inline" type="text" placeholder="　年　月　日"></span>
+    <span>作成者：<input class="inline" type="text" placeholder="氏名"></span>
+  </div>
+
+<!-- アノテーションモーダル -->
+<div id="anno-modal">
+  <div class="anno-toolbar">
+    <button class="tool-btn active" id="tool-arrow" onclick="setTool('arrow')">➤ 矢印</button>
+    <button class="tool-btn" id="tool-line" onclick="setTool('line')">― 線</button>
+    <button class="tool-btn" id="tool-rect" onclick="setTool('rect')">□ 四角</button>
+    <button class="tool-btn" id="tool-pen" onclick="setTool('pen')">✏️ ペン</button>
+    <button class="tool-btn" id="tool-text" onclick="setTool('text')">T テキスト</button>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <div class="anno-color" style="background:#ff3333;" onclick="setColor('#ff3333')"></div>
+      <div class="anno-color" style="background:#ffdd00;" onclick="setColor('#ffdd00')"></div>
+      <div class="anno-color" style="background:#33cc33;" onclick="setColor('#33cc33')"></div>
+      <div class="anno-color" style="background:#3399ff;" onclick="setColor('#3399ff')"></div>
+      <div class="anno-color" style="background:#ffffff;" onclick="setColor('#ffffff')"></div>
+    </div>
+    <button class="anno-undo-btn" onclick="undoAnno()">↩ 戻す</button>
+    <button class="anno-cancel-btn" onclick="closeAnno()">キャンセル</button>
+    <button class="anno-save-btn" onclick="saveAnno()">✔ 保存</button>
+  </div>
+  <div id="anno-wrap">
+    <canvas id="anno-canvas"></canvas>
+  </div>
+</div>
+
+  <div class="section">
+    <div class="section-title">■ 実施情報</div>
+    <table>
+      <tr><th>利用者氏名</th><td><input class="cell" type="text"></td></tr>
+      <tr><th>実施日</th><td><input class="cell" type="text" placeholder="　年　月　日"></td></tr>
+      <tr><th>同席者</th><td><input class="cell" type="text"></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">■ 各室・設備の状況</div>
+    <div id="restore-bar" class="no-print">
+      <div class="restore-label">🗑️ 削除済み項目（タップで復元）：</div>
+      <div class="restore-btns" id="restore-btns"></div>
+    </div>
+    <div id="rooms-container">
+
+      <!-- 1. 玄関アプローチ -->
+      <div class="room-block" id="room-0">
+        <div class="room-block-title">
+          <span class="room-title-text">１．玄関アプローチ</span>
+          <button class="room-del-btn no-print" onclick="deleteRoom('room-0','１．玄関アプローチ')">×</button>
+        </div>
+        <div class="room-inner">
+          <div class="room-left">
+            <div class="dim-block">
+              <div class="room-sub">📐 寸法・状況</div>
+              <div class="dim-row">段差高さ　A <input class="num" type="text"> cm　B <input class="num" type="text"> cm　C <input class="num" type="text"> cm</div>
+              <div class="dim-row">手すりの設置
+                <span class="radio-group">
+                  <label><input type="radio" name="r0-te" value="あり">あり</label>
+                  <label><input type="radio" name="r0-te" value="なし">なし</label>
+                </span>
+              </div>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">問題点・特記事項</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">改修・用具の提案</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+          </div>
+          <div class="room-right">
+            <div class="room-sub">📷 写真</div>
+            <div class="photo-grid" id="pg-room-0"></div>
+            <div class="photo-btn-group no-print">
+              <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-0').click()">🖼️ ギャラリー</button>
+              <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-room-0').click()">📷 カメラ</button>
+            </div>
+            <input type="file" id="fg-room-0" accept="image/*" multiple onchange="loadPhotos(this,'room-0')">
+            <input type="file" id="fc-room-0" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-0')">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 玄関 -->
+      <div class="room-block" id="room-1">
+        <div class="room-block-title">
+          <span class="room-title-text">２．玄関</span>
+          <button class="room-del-btn no-print" onclick="deleteRoom('room-1','２．玄関')">×</button>
+        </div>
+        <div class="room-inner">
+          <div class="room-left">
+            <div class="dim-block">
+              <div class="room-sub">📐 寸法・状況</div>
+              <div class="dim-row">玄関入り口の段差 <input class="num" type="text"> cm</div>
+              <div class="dim-row">上がり框の高さ <input class="num" type="text"> cm</div>
+              <div class="dim-row">手すりの設置
+                <span class="radio-group">
+                  <label><input type="radio" name="r1-te" value="あり">あり</label>
+                  <label><input type="radio" name="r1-te" value="なし">なし</label>
+                </span>
+              </div>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">問題点・特記事項</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">改修・用具の提案</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+          </div>
+          <div class="room-right">
+            <div class="room-sub">📷 写真</div>
+            <div class="photo-grid" id="pg-room-1"></div>
+            <div class="photo-btn-group no-print">
+              <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-1').click()">🖼️ ギャラリー</button>
+              <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-room-1').click()">📷 カメラ</button>
+            </div>
+            <input type="file" id="fg-room-1" accept="image/*" multiple onchange="loadPhotos(this,'room-1')">
+            <input type="file" id="fc-room-1" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-1')">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 居間 -->
+      <div class="room-block" id="room-2">
+        <div class="room-block-title">
+          <span class="room-title-text">３．居間</span>
+          <button class="room-del-btn no-print" onclick="deleteRoom('room-2','３．居間')">×</button>
+        </div>
+        <div class="room-inner">
+          <div class="room-left">
+            <div class="dim-block">
+              <div class="room-sub">📐 寸法・状況</div>
+              <div class="dim-row">入口の段差 <input class="num" type="text"> cm</div>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">問題点・特記事項</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">改修・用具の提案</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+          </div>
+          <div class="room-right">
+            <div class="room-sub">📷 写真</div>
+            <div class="photo-grid" id="pg-room-2"></div>
+            <div class="photo-btn-group no-print">
+              <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-2').click()">🖼️ ギャラリー</button>
+              <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-room-2').click()">📷 カメラ</button>
+            </div>
+            <input type="file" id="fg-room-2" accept="image/*" multiple onchange="loadPhotos(this,'room-2')">
+            <input type="file" id="fc-room-2" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-2')">
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 台所 -->
+      <div class="room-block" id="room-3">
+        <div class="room-block-title">
+          <span class="room-title-text">４．台所</span>
+          <button class="room-del-btn no-print" onclick="deleteRoom('room-3','４．台所')">×</button>
+        </div>
+        <div class="room-inner">
+          <div class="room-left">
+            <div class="dim-block">
+              <div class="room-sub">📐 寸法・状況</div>
+              <div class="dim-row">入口の段差 <input class="num" type="text"> cm</div>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">問題点・特記事項</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">改修・用具の提案</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+          </div>
+          <div class="room-right">
+            <div class="room-sub">📷 写真</div>
+            <div class="photo-grid" id="pg-room-3"></div>
+            <div class="photo-btn-group no-print">
+              <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-3').click()">🖼️ ギャラリー</button>
+              <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-room-3').click()">📷 カメラ</button>
+            </div>
+            <input type="file" id="fg-room-3" accept="image/*" multiple onchange="loadPhotos(this,'room-3')">
+            <input type="file" id="fc-room-3" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-3')">
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 居室 -->
+      <div class="room-block" id="room-4">
+        <div class="room-block-title">
+          <span class="room-title-text">５．居室</span>
+          <button class="room-del-btn no-print" onclick="deleteRoom('room-4','５．居室')">×</button>
+        </div>
+        <div class="room-inner">
+          <div class="room-left">
+            <div class="dim-block">
+              <div class="room-sub">📐 寸法・状況</div>
+              <div class="dim-row">入口の段差 <input class="num" type="text"> cm</div>
+              <div class="dim-row">ベッドの設置
+                <span class="radio-group">
+                  <label><input type="radio" name="r4-bed" value="あり">あり</label>
+                  <label><input type="radio" name="r4-bed" value="なし">なし</label>
+                </span>
+              </div>
+              <div class="dim-row">ベッドの高さ <input class="num" type="text"> cm</div>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">問題点・特記事項</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">改修・用具の提案</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+          </div>
+          <div class="room-right">
+            <div class="room-sub">📷 写真</div>
+            <div class="photo-grid" id="pg-room-4"></div>
+            <div class="photo-btn-group no-print">
+              <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-4').click()">🖼️ ギャラリー</button>
+              <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-room-4').click()">📷 カメラ</button>
+            </div>
+            <input type="file" id="fg-room-4" accept="image/*" multiple onchange="loadPhotos(this,'room-4')">
+            <input type="file" id="fc-room-4" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-4')">
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. トイレ -->
+      <div class="room-block" id="room-5">
+        <div class="room-block-title">
+          <span class="room-title-text">６．トイレ</span>
+          <button class="room-del-btn no-print" onclick="deleteRoom('room-5','６．トイレ')">×</button>
+        </div>
+        <div class="room-inner">
+          <div class="room-left">
+            <div class="dim-block">
+              <div class="room-sub">📐 寸法・状況</div>
+              <div class="dim-row">入口の段差 <input class="num" type="text"> cm</div>
+              <div class="dim-row">座面の高さ <input class="num" type="text"> cm</div>
+              <div class="dim-row">トイレ先端から入口までの距離 <input class="num" type="text"> cm</div>
+              <div class="dim-row">トイレ中央から壁までの距離（横幅） <input class="num" type="text"> cm</div>
+              <div class="dim-row">手すりの設置
+                <span class="radio-group">
+                  <label><input type="radio" name="r5-te" value="あり">あり</label>
+                  <label><input type="radio" name="r5-te" value="なし">なし</label>
+                </span>
+              </div>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">問題点・特記事項</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">改修・用具の提案</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+          </div>
+          <div class="room-right">
+            <div class="room-sub">📷 写真</div>
+            <div class="photo-grid" id="pg-room-5"></div>
+            <div class="photo-btn-group no-print">
+              <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-5').click()">🖼️ ギャラリー</button>
+              <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-room-5').click()">📷 カメラ</button>
+            </div>
+            <input type="file" id="fg-room-5" accept="image/*" multiple onchange="loadPhotos(this,'room-5')">
+            <input type="file" id="fc-room-5" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-5')">
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. 脱衣場 -->
+      <div class="room-block" id="room-6">
+        <div class="room-block-title">
+          <span class="room-title-text">７．脱衣場</span>
+          <button class="room-del-btn no-print" onclick="deleteRoom('room-6','７．脱衣場')">×</button>
+        </div>
+        <div class="room-inner">
+          <div class="room-left">
+            <div class="dim-block">
+              <div class="room-sub">📐 寸法・状況</div>
+              <div class="dim-row">入口の段差 <input class="num" type="text"> cm</div>
+              <div class="dim-row">椅子の設置
+                <span class="radio-group">
+                  <label><input type="radio" name="r6-ch" value="あり">あり</label>
+                  <label><input type="radio" name="r6-ch" value="なし">なし</label>
+                </span>
+              </div>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">問題点・特記事項</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">改修・用具の提案</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+          </div>
+          <div class="room-right">
+            <div class="room-sub">📷 写真</div>
+            <div class="photo-grid" id="pg-room-6"></div>
+            <div class="photo-btn-group no-print">
+              <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-6').click()">🖼️ ギャラリー</button>
+              <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-room-6').click()">📷 カメラ</button>
+            </div>
+            <input type="file" id="fg-room-6" accept="image/*" multiple onchange="loadPhotos(this,'room-6')">
+            <input type="file" id="fc-room-6" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-6')">
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. 浴室 -->
+      <div class="room-block" id="room-7">
+        <div class="room-block-title">
+          <span class="room-title-text">８．浴室</span>
+          <button class="room-del-btn no-print" onclick="deleteRoom('room-7','８．浴室')">×</button>
+        </div>
+        <div class="room-inner">
+          <div class="room-left">
+            <div class="dim-block">
+              <div class="room-sub">📐 寸法・状況</div>
+              <div class="dim-row">入口の段差 <input class="num" type="text"> cm</div>
+              <div class="dim-row">床からの浴槽縁までの高さ <input class="num" type="text"> cm</div>
+              <div class="dim-row">浴槽の深さ <input class="num" type="text"> cm</div>
+              <div class="dim-row">浴槽の縦幅 <input class="num" type="text"> cm　　浴槽縁の幅（縦） <input class="num" type="text"> cm</div>
+              <div class="dim-row">浴槽の横幅 <input class="num" type="text"> cm　　浴槽縁の幅（横） <input class="num" type="text"> cm</div>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">問題点・特記事項</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+            <div class="notes-block">
+              <div class="notes-label">改修・用具の提案</div>
+              <label class="none-check"><input type="checkbox">特にありません</label>
+              <textarea class="note-ta" placeholder="自由記載"></textarea>
+            </div>
+          </div>
+          <div class="room-right">
+            <div class="room-sub">📷 写真</div>
+            <div class="photo-grid" id="pg-room-7"></div>
+            <div class="photo-btn-group no-print">
+              <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-7').click()">🖼️ ギャラリー</button>
+              <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-room-7').click()">📷 カメラ</button>
+            </div>
+            <input type="file" id="fg-room-7" accept="image/*" multiple onchange="loadPhotos(this,'room-7')">
+            <input type="file" id="fc-room-7" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-7')">
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /rooms-container -->
+    <button class="add-room-btn no-print" onclick="addCustomRoom()">＋ その他の項目を追加</button>
+  </div>
+
+</div>
+
+<div class="btn-bar no-print">
+  <button class="btn-print" onclick="window.print()">🖨️ 印刷</button>
+  <button class="btn-pdf"   onclick="savePDF()">📄 PDFで保存</button>
+  <button class="btn-save"  onclick="downloadHTML()">💾 HTMLで保存</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const deletedRooms = {};
+let customCount = 0;
+
+function deleteRoom(id, label) {
+  const block = document.getElementById(id);
+  if (!block) return;
+  deletedRooms[id] = { el: block, label };
+  block.remove();
+  document.getElementById("restore-bar").style.display = "block";
+  const btn = document.createElement("button");
+  btn.className = "restore-btn";
+  btn.id = "rb-" + id;
+  btn.textContent = "＋ " + label;
+  btn.onclick = () => restoreRoom(id);
+  document.getElementById("restore-btns").appendChild(btn);
+}
+
+function restoreRoom(id) {
+  const data = deletedRooms[id];
+  if (!data) return;
+  delete deletedRooms[id];
+  const container = document.getElementById("rooms-container");
+  if (id.startsWith("room-")) {
+    const num = parseInt(id.replace("room-", ""));
+    const all = Array.from(container.querySelectorAll("[id^='room-']"));
+    const next = all.find(b => parseInt(b.id.replace("room-", "")) > num);
+    next ? container.insertBefore(data.el, next) : container.appendChild(data.el);
+  } else {
+    container.appendChild(data.el);
+  }
+  document.getElementById("rb-" + id)?.remove();
+  if (!document.getElementById("restore-btns").children.length)
+    document.getElementById("restore-bar").style.display = "none";
+}
+
+function addCustomRoom() {
+  customCount++;
+  const id = "custom-" + customCount;
+  const div = document.createElement("div");
+  div.className = "room-block";
+  div.id = id;
+  div.innerHTML = `
+    <div class="room-block-title">
+      <input class="room-title-input" type="text" placeholder="タイトルを入力">
+      <button class="room-del-btn no-print" onclick="deleteRoom('${id}','その他')">×</button>
+    </div>
+    <div class="room-inner">
+      <div class="room-left">
+        <div class="dim-block">
+          <div class="room-sub">📐 寸法・状況</div>
+          <div class="dim-row"><input class="cell" type="text" placeholder="寸法・状況を入力" style="border-bottom:1px solid #888;"></div>
+        </div>
+        <div class="notes-block">
+          <div class="notes-label">問題点・特記事項</div>
+          <label class="none-check"><input type="checkbox">特にありません</label>
+          <textarea class="note-ta" placeholder="自由記載"></textarea>
+        </div>
+        <div class="notes-block">
+          <div class="notes-label">改修・用具の提案</div>
+          <label class="none-check"><input type="checkbox">特にありません</label>
+          <textarea class="note-ta" placeholder="自由記載"></textarea>
+        </div>
+      </div>
+      <div class="room-right">
+        <div class="room-sub">📷 写真</div>
+        <div class="photo-grid" id="pg-${id}"></div>
+        <div class="photo-btn-group no-print">
+          <button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-${id}').click()">🖼️ ギャラリー</button>
+          <button class="add-photo-btn btn-camera"  onclick="document.getElementById('fc-${id}').click()">📷 カメラ</button>
+        </div>
+        <input type="file" id="fg-${id}" accept="image/*" multiple onchange="loadPhotos(this,'${id}')">
+        <input type="file" id="fc-${id}" accept="image/*" capture="environment" onchange="loadPhotos(this,'${id}')">
+      </div>
+    </div>`;
+  document.getElementById("rooms-container").appendChild(div);
+}
+
+function loadPhotos(input, roomId) {
+  const grid = document.getElementById("pg-" + roomId);
+  Array.from(input.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => addPhotoThumb(grid, e.target.result);
+    reader.readAsDataURL(file);
+  });
+  input.value = "";
+}
+
+function addPhotoThumb(grid, src) {
+  const thumb = document.createElement("div");
+  thumb.className = "photo-thumb";
+  thumb.innerHTML = `<img src="${src}" alt="写真"><button class="del-btn no-print" onclick="this.parentNode.remove()">×</button><button class="edit-btn no-print" onclick="openAnno(this)">✏️ 編集</button>`;
+  grid.appendChild(thumb);
+}
+
+// アノテーション
+let annoTool = "arrow", annoColor = "#ff3333";
+let annoCanvas, annoCtx, annoImg, annoThumbImg;
+let drawing = false, startX, startY;
+let history = [], penPath = [];
+
+function setTool(t) {
+  annoTool = t;
+  document.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tool-" + t)?.classList.add("active");
+}
+function setColor(c) { annoColor = c; }
+
+function openAnno(btn) {
+  const img = btn.previousElementSibling.previousElementSibling;
+  annoThumbImg = img;
+  annoCanvas = document.getElementById("anno-canvas");
+  annoCtx = annoCanvas.getContext("2d");
+  history = []; penPath = [];
+  const baseImg = new Image();
+  baseImg.onload = () => {
+    annoImg = baseImg;
+    const maxW = window.innerWidth * 0.94;
+    const maxH = window.innerHeight * 0.70;
+    let w = baseImg.width, h = baseImg.height;
+    const scale = Math.min(maxW / w, maxH / h, 1);
+    annoCanvas.width  = Math.round(w * scale);
+    annoCanvas.height = Math.round(h * scale);
+    redraw();
+    saveHistory();
+  };
+  baseImg.src = img.src;
+  document.getElementById("anno-modal").classList.add("open");
+}
+
+function redraw() {
+  annoCtx.clearRect(0, 0, annoCanvas.width, annoCanvas.height);
+  annoCtx.drawImage(annoImg, 0, 0, annoCanvas.width, annoCanvas.height);
+  history.forEach(s => drawShape(s));
+}
+
+function saveHistory() { history.push(annoCtx.getImageData(0, 0, annoCanvas.width, annoCanvas.height)); }
+
+function undoAnno() {
+  if (history.length > 1) history.pop();
+  annoCtx.putImageData(history[history.length - 1], 0, 0);
+}
+
+function pos(e) {
+  const r = annoCanvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - r.left, y: src.clientY - r.top };
+}
+
+annoCanvas = document.getElementById("anno-canvas");
+annoCanvas.addEventListener("mousedown",  e => startDraw(pos(e)));
+annoCanvas.addEventListener("mousemove",  e => moveDraw(pos(e)));
+annoCanvas.addEventListener("mouseup",    e => endDraw(pos(e)));
+annoCanvas.addEventListener("touchstart", e => { e.preventDefault(); startDraw(pos(e)); }, { passive: false });
+annoCanvas.addEventListener("touchmove",  e => { e.preventDefault(); moveDraw(pos(e)); }, { passive: false });
+annoCanvas.addEventListener("touchend",   e => { e.preventDefault(); endDraw(pos(e)); }, { passive: false });
+
+function startDraw(p) {
+  if (annoTool === "text") {
+    const txt = prompt("テキストを入力");
+    if (!txt) return;
+    annoCtx.putImageData(history[history.length - 1], 0, 0);
+    annoCtx.font = "bold 20px sans-serif";
+    annoCtx.fillStyle = annoColor;
+    annoCtx.strokeStyle = "rgba(0,0,0,0.6)";
+    annoCtx.lineWidth = 2;
+    annoCtx.strokeText(txt, p.x, p.y);
+    annoCtx.fillText(txt, p.x, p.y);
+    saveHistory();
+    return;
+  }
+  drawing = true;
+  startX = p.x; startY = p.y;
+  if (annoTool === "pen") penPath = [p];
+}
+
+function moveDraw(p) {
+  if (!drawing) return;
+  annoCtx.putImageData(history[history.length - 1], 0, 0);
+  annoCtx.strokeStyle = annoColor;
+  annoCtx.fillStyle = annoColor;
+  annoCtx.lineWidth = 3;
+  annoCtx.lineCap = "round";
+  if (annoTool === "arrow") drawArrow(annoCtx, startX, startY, p.x, p.y);
+  else if (annoTool === "line") { annoCtx.beginPath(); annoCtx.moveTo(startX, startY); annoCtx.lineTo(p.x, p.y); annoCtx.stroke(); }
+  else if (annoTool === "rect") { annoCtx.beginPath(); annoCtx.strokeRect(startX, startY, p.x - startX, p.y - startY); }
+  else if (annoTool === "pen") { penPath.push(p); annoCtx.beginPath(); annoCtx.moveTo(penPath[0].x, penPath[0].y); penPath.forEach(pt => annoCtx.lineTo(pt.x, pt.y)); annoCtx.stroke(); }
+}
+
+function endDraw(p) {
+  if (!drawing) return;
+  drawing = false;
+  saveHistory();
+}
+
+function drawArrow(ctx, x1, y1, x2, y2) {
+  const headLen = 16, angle = Math.atan2(y2 - y1, x2 - x1);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI/6), y2 - headLen * Math.sin(angle - Math.PI/6));
+  ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI/6), y2 - headLen * Math.sin(angle + Math.PI/6));
+  ctx.closePath(); ctx.fill();
+}
+
+function drawShape(s) {}
+
+function saveAnno() {
+  annoThumbImg.src = annoCanvas.toDataURL("image/jpeg", 0.95);
+  closeAnno();
+}
+function closeAnno() { document.getElementById("anno-modal").classList.remove("open"); }
+
+async function savePDF() {
+  const btns = document.querySelectorAll(".btn-bar button");
+  btns.forEach(b => b.disabled = true);
+  document.querySelectorAll(".no-print").forEach(el => el.style.visibility = "hidden");
+  try {
+    const { jsPDF } = window.jspdf;
+    const page = document.querySelector(".page");
+    const canvas = await html2canvas(page, { scale: 2, useCORS: true, allowTaint: true });
+    const imgData = canvas.toDataURL("image/jpeg", 0.95);
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const w = pdf.internal.pageSize.getWidth();
+    const h = (canvas.height / canvas.width) * w;
+    const pageH = pdf.internal.pageSize.getHeight();
+    let y = 0;
+    while (y < h) {
+      if (y > 0) pdf.addPage();
+      pdf.addImage(imgData, "JPEG", 0, -y, w, h);
+      y += pageH;
+    }
+    pdf.save("家屋調査報告書.pdf");
+  } catch(e) {
+    alert("PDF生成に失敗しました。印刷メニューからPDF保存をお試しください。");
+  } finally {
+    document.querySelectorAll(".no-print").forEach(el => el.style.visibility = "");
+    btns.forEach(b => b.disabled = false);
+  }
+}
+
+function downloadHTML() {
+  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "家屋調査報告書.html";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>
