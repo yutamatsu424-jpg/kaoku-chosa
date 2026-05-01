@@ -581,36 +581,31 @@ async function savePDF(filename) {
   btns.forEach(b => b.disabled = true);
   document.querySelectorAll('.no-print').forEach(el => el.style.visibility = 'hidden');
 
-  // A4幅に合わせて一時的にページ幅を794px（96dpi×210mm）に固定
+  // A4幅794pxで印刷用にレイアウトを一時変更
   const page = document.querySelector('.page');
-  const origStyle = page.getAttribute('style') || '';
-  page.style.width = '794px';
-  page.style.maxWidth = '794px';
-  page.style.padding = '20px 24px';
+  const origPageStyle = page.getAttribute('style') || '';
+  page.style.cssText = 'width:794px !important; max-width:794px !important; padding:20px 24px !important; margin:0 !important; box-shadow:none !important;';
 
-  // room-innerを強制的に横並びに
-  const roomInners = document.querySelectorAll('.room-inner');
-  const origInnerStyles = [];
-  roomInners.forEach(el => {
-    origInnerStyles.push(el.getAttribute('style') || '');
-    el.style.flexDirection = 'row';
+  const saved = [];
+  document.querySelectorAll('.room-inner,.room-left,.room-right').forEach(el => {
+    saved.push({ el, style: el.getAttribute('style') || '' });
   });
-  const roomLefts = document.querySelectorAll('.room-left');
-  const origLeftStyles = [];
-  roomLefts.forEach(el => {
-    origLeftStyles.push(el.getAttribute('style') || '');
-    el.style.borderBottom = 'none';
-    el.style.borderRight = '1px solid #ddd';
-    el.style.flex = '1';
-  });
-  const roomRights = document.querySelectorAll('.room-right');
-  const origRightStyles = [];
-  roomRights.forEach(el => {
-    origRightStyles.push(el.getAttribute('style') || '');
-    el.style.flex = '1';
+  document.querySelectorAll('.room-inner').forEach(el => el.style.cssText = 'display:flex !important; flex-direction:row !important;');
+  document.querySelectorAll('.room-left').forEach(el => el.style.cssText = 'flex:1 !important; border-bottom:none !important; border-right:1px solid #ddd !important;');
+  document.querySelectorAll('.room-right').forEach(el => el.style.cssText = 'flex:1 !important;');
+
+  // CDNからライブラリを動的ロード（ローカルファイルでも動作するよう）
+  const loadScript = (src) => new Promise((res, rej) => {
+    if (document.querySelector(`script[src="${src}"]`)) { res(); return; }
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
   });
 
   try {
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pW = pdf.internal.pageSize.getWidth();
@@ -625,12 +620,10 @@ async function savePDF(filename) {
         width: 794, windowWidth: 794
       });
       const ratio = c.height / c.width;
-      let w = printW;
-      let h = w * ratio;
+      let w = printW, h = w * ratio;
       if (h > pH - margin * 2) { h = pH - margin * 2; w = h / ratio; }
       if (curY + h > pH - margin) { pdf.addPage(); curY = margin; }
-      const x = margin + (printW - w) / 2;
-      pdf.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', x, curY, w, h);
+      pdf.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', margin + (printW - w) / 2, curY, w, h);
       curY += h + 4;
     };
 
@@ -641,14 +634,11 @@ async function savePDF(filename) {
 
     pdf.save((filename || '家屋調査報告書') + '.pdf');
   } catch (e) {
-    alert('PDF生成に失敗しました。');
+    alert('PDF生成に失敗しました。インターネット接続を確認してください。');
     console.error(e);
   } finally {
-    // スタイルを元に戻す
-    page.setAttribute('style', origStyle);
-    roomInners.forEach((el, i) => el.setAttribute('style', origInnerStyles[i]));
-    roomLefts.forEach((el, i) => el.setAttribute('style', origLeftStyles[i]));
-    roomRights.forEach((el, i) => el.setAttribute('style', origRightStyles[i]));
+    page.setAttribute('style', origPageStyle);
+    saved.forEach(({ el, style }) => el.setAttribute('style', style));
     document.querySelectorAll('.no-print').forEach(el => el.style.visibility = '');
     btns.forEach(b => b.disabled = false);
   }
