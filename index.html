@@ -580,6 +580,36 @@ async function savePDF(filename) {
   const btns = document.querySelectorAll('.btn-bar button');
   btns.forEach(b => b.disabled = true);
   document.querySelectorAll('.no-print').forEach(el => el.style.visibility = 'hidden');
+
+  // A4幅に合わせて一時的にページ幅を794px（96dpi×210mm）に固定
+  const page = document.querySelector('.page');
+  const origStyle = page.getAttribute('style') || '';
+  page.style.width = '794px';
+  page.style.maxWidth = '794px';
+  page.style.padding = '20px 24px';
+
+  // room-innerを強制的に横並びに
+  const roomInners = document.querySelectorAll('.room-inner');
+  const origInnerStyles = [];
+  roomInners.forEach(el => {
+    origInnerStyles.push(el.getAttribute('style') || '');
+    el.style.flexDirection = 'row';
+  });
+  const roomLefts = document.querySelectorAll('.room-left');
+  const origLeftStyles = [];
+  roomLefts.forEach(el => {
+    origLeftStyles.push(el.getAttribute('style') || '');
+    el.style.borderBottom = 'none';
+    el.style.borderRight = '1px solid #ddd';
+    el.style.flex = '1';
+  });
+  const roomRights = document.querySelectorAll('.room-right');
+  const origRightStyles = [];
+  roomRights.forEach(el => {
+    origRightStyles.push(el.getAttribute('style') || '');
+    el.style.flex = '1';
+  });
+
   try {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -587,42 +617,38 @@ async function savePDF(filename) {
     const pH = pdf.internal.pageSize.getHeight();
     const margin = 10;
     const printW = pW - margin * 2;
+    let curY = margin;
 
-    // 各要素をcanvas化してPDFに追加（1ページに収まらない場合は縮小）
     const addEl = async (el) => {
-      const c = await html2canvas(el, { scale: 2, useCORS: true, allowTaint: true, logging: false });
+      const c = await html2canvas(el, {
+        scale: 2, useCORS: true, allowTaint: true, logging: false,
+        width: 794, windowWidth: 794
+      });
       const ratio = c.height / c.width;
       let w = printW;
       let h = w * ratio;
-      // 1ページを超える場合は縮小して1ページに収める
-      if (h > pH - margin * 2) {
-        h = pH - margin * 2;
-        w = h / ratio;
-      }
-      // 現在ページに収まらなければ改ページ
-      if (curY + h > pH - margin) {
-        pdf.addPage();
-        curY = margin;
-      }
-      const x = margin + (printW - w) / 2; // 中央揃え
+      if (h > pH - margin * 2) { h = pH - margin * 2; w = h / ratio; }
+      if (curY + h > pH - margin) { pdf.addPage(); curY = margin; }
+      const x = margin + (printW - w) / 2;
       pdf.addImage(c.toDataURL('image/jpeg', 0.92), 'JPEG', x, curY, w, h);
       curY += h + 4;
     };
 
-    let curY = margin;
-
     await addEl(document.querySelector('h1'));
     await addEl(document.querySelector('.header-info'));
     await addEl(document.querySelector('.section'));
-    for (const block of document.querySelectorAll('.room-block')) {
-      await addEl(block);
-    }
+    for (const block of document.querySelectorAll('.room-block')) await addEl(block);
 
     pdf.save((filename || '家屋調査報告書') + '.pdf');
   } catch (e) {
     alert('PDF生成に失敗しました。');
     console.error(e);
   } finally {
+    // スタイルを元に戻す
+    page.setAttribute('style', origStyle);
+    roomInners.forEach((el, i) => el.setAttribute('style', origInnerStyles[i]));
+    roomLefts.forEach((el, i) => el.setAttribute('style', origLeftStyles[i]));
+    roomRights.forEach((el, i) => el.setAttribute('style', origRightStyles[i]));
     document.querySelectorAll('.no-print').forEach(el => el.style.visibility = '');
     btns.forEach(b => b.disabled = false);
   }
