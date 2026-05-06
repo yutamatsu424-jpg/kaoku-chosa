@@ -51,47 +51,46 @@ input.room-title-input::placeholder { color:rgba(255,255,255,.6); }
 .photo-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; min-height:10px; }
 .photo-thumb { position:relative; width:250px; height:250px; }
 .photo-thumb img { width:250px; height:250px; object-fit:cover; border:1px solid #ccc; border-radius:4px; display:block; }
-.photo-thumb .del-btn { position:absolute; top:-6px; right:-6px; background:#c0392b; color:#fff; border:none; border-radius:50%; width:22px; height:22px; font-size:13px; cursor:pointer; line-height:22px; text-align:center; padding:0; touch-action:manipulation; }
-.photo-thumb .edit-btn { position:absolute; bottom:28px; right:4px; background:rgba(0,0,0,.6); color:#fff; border:none; border-radius:3px; font-size:9pt; padding:2px 6px; cursor:pointer; touch-action:manipulation; }
-.photo-thumb .trim-btn { position:absolute; bottom:4px; right:4px; background:rgba(44,95,138,.85); color:#fff; border:none; border-radius:3px; font-size:9pt; padding:2px 6px; cursor:pointer; touch-action:manipulation; }
+.photo-thumb .del-btn { position:absolute; top:-6px; right:-6px; background:#c0392b; color:#fff; border:none; border-radius:50%; width:22px; height:22px; font-size:13px; cursor:pointer; line-height:22px; text-align:center; padding:0; }
+.photo-thumb .edit-btn { position:absolute; bottom:28px; right:4px; background:rgba(0,0,0,.6); color:#fff; border:none; border-radius:3px; font-size:9pt; padding:2px 6px; cursor:pointer; }
+.photo-thumb .trim-btn { position:absolute; bottom:4px; right:4px; background:rgba(44,95,138,.85); color:#fff; border:none; border-radius:3px; font-size:9pt; padding:2px 6px; cursor:pointer; }
 input[type=file] { display:none; }
 .photo-btn-group { display:flex; flex-wrap:wrap; gap:6px; }
-.add-photo-btn { display:inline-flex; align-items:center; gap:5px; font-size:10pt; color:#fff; border:none; padding:7px 14px; border-radius:4px; cursor:pointer; touch-action:manipulation; }
+.add-photo-btn { display:inline-flex; align-items:center; gap:5px; font-size:10pt; color:#fff; border:none; padding:7px 14px; border-radius:4px; cursor:pointer; }
 .btn-gallery { background:#2c5f8a; }
 .btn-camera  { background:#2a7a4b; }
 #restore-bar { background:#f5f0e8; border:1px solid #ccc; border-radius:6px; padding:8px 12px; margin-bottom:10px; display:none; }
 .restore-label { font-size:9.5pt; color:#555; margin-bottom:6px; }
 .restore-btns { display:flex; flex-wrap:wrap; gap:6px; }
-.restore-btn { font-size:9.5pt; background:#fff; border:1px solid #4a7fa8; color:#2c5f8a; padding:6px 12px; border-radius:4px; cursor:pointer; touch-action:manipulation; }
-.add-room-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:10px; background:#fff; border:2px dashed #4a7fa8; color:#2c5f8a; font-size:10.5pt; border-radius:4px; cursor:pointer; touch-action:manipulation; margin-top:4px; font-family:inherit; }
+.restore-btn { font-size:9.5pt; background:#fff; border:1px solid #4a7fa8; color:#2c5f8a; padding:6px 12px; border-radius:4px; cursor:pointer; }
+.add-room-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:10px; background:#fff; border:2px dashed #4a7fa8; color:#2c5f8a; font-size:10.5pt; border-radius:4px; cursor:pointer; margin-top:4px; font-family:inherit; }
 .btn-bar { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; padding:16px; }
-.btn-bar button { padding:12px 20px; font-size:13px; border:none; border-radius:6px; cursor:pointer; color:#fff; touch-action:manipulation; flex:1; min-width:130px; max-width:200px; font-family:inherit; }
+.btn-bar button { padding:12px 20px; font-size:13px; border:none; border-radius:6px; cursor:pointer; color:#fff; flex:1; min-width:130px; max-width:200px; font-family:inherit; }
 .btn-print { background:#2c5f8a; }
 .btn-pdf   { background:#8a2c2c; }
 .btn-save  { background:#2a7a4b; }
 
-/* アノテーションモーダル */
+/* アノテーション */
 #anno-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:1000; flex-direction:column; align-items:center; justify-content:flex-start; overflow-y:auto; }
 #anno-modal.open { display:flex; }
 .anno-toolbar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:8px; width:100%; background:rgba(0,0,0,.7); position:sticky; top:0; z-index:10; }
-.tool-btn { padding:6px 10px; border:none; border-radius:4px; cursor:pointer; font-size:10pt; background:#555; color:#fff; touch-action:manipulation; }
+.tool-btn { padding:6px 10px; border:none; border-radius:4px; cursor:pointer; font-size:10pt; background:#555; color:#fff; }
 .tool-btn.active { background:#e67e22; }
 .anno-color { width:26px; height:26px; border-radius:50%; border:2px solid #fff; cursor:pointer; flex-shrink:0; }
 .anno-color.active-color { border:3px solid #ff0; }
-.anno-action-btn { border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:10pt; touch-action:manipulation; }
+.anno-action-btn { border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:10pt; }
 .anno-save-btn { background:#2a7a4b; color:#fff; margin-left:auto; }
 .anno-cancel-btn { background:#888; color:#fff; }
 .anno-undo-btn { background:#555; color:#fff; }
-#anno-container { position:relative; display:inline-block; margin:10px auto; }
-#anno-bg-img { display:block; max-width:96vw; max-height:65vh; border-radius:4px; }
-#anno-svg-overlay { position:absolute; top:0; left:0; width:100%; height:100%; touch-action:none; cursor:crosshair; }
+#anno-canvas-wrap { position:relative; margin:10px auto; display:inline-block; }
+#anno-canvas { display:block; max-width:96vw; border-radius:4px; border:2px solid #fff; cursor:crosshair; touch-action:none; }
 
 /* トリミング */
 #trim-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:1100; flex-direction:column; align-items:center; justify-content:center; }
 #trim-modal.open { display:flex; }
 #trim-canvas { display:block; max-width:94vw; max-height:65vh; border:2px solid #fff; border-radius:4px; touch-action:none; }
 .trim-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 4px; width:100%; max-width:94vw; }
-.trim-toolbar button { padding:6px 12px; border:none; border-radius:4px; cursor:pointer; font-size:10pt; color:#fff; touch-action:manipulation; }
+.trim-toolbar button { padding:6px 12px; border:none; border-radius:4px; cursor:pointer; font-size:10pt; color:#fff; }
 .trim-save-btn { background:#2a7a4b; margin-left:auto; }
 .trim-cancel-btn { background:#888; }
 .trim-reset-btn { background:#555; }
@@ -102,7 +101,6 @@ input[type=file] { display:none; }
 .filename-box { background:#fff; border-radius:8px; padding:24px; width:320px; max-width:90vw; }
 .filename-box h3 { margin-bottom:12px; font-size:12pt; }
 .filename-box input { width:100%; border:1px solid #ccc; border-radius:4px; padding:8px; font-size:11pt; font-family:inherit; outline:none; margin-bottom:14px; }
-.filename-box input:focus { border-color:#4a7fa8; }
 .filename-btns { display:flex; gap:8px; justify-content:flex-end; }
 .filename-btns button { padding:7px 18px; border:none; border-radius:4px; cursor:pointer; font-size:10pt; font-family:inherit; }
 .fn-ok { background:#2a7a4b; color:#fff; }
@@ -131,7 +129,7 @@ input[type=file] { display:none; }
     <span>作成日：<input class="inline" type="text" placeholder="　年　月　日"></span>
     <span>作成者：<input class="inline" type="text" placeholder="氏名"></span>
   </div>
-  <div style="text-align:right; font-size:10pt; margin-bottom:14px;">ビハーラ光風通所リハビリテーション</div>
+  <div style="text-align:right;font-size:10pt;margin-bottom:14px;">ビハーラ光風通所リハビリテーション</div>
   <div class="section">
     <div class="section-title">■ 実施情報</div>
     <table>
@@ -158,7 +156,7 @@ input[type=file] { display:none; }
     </div>
     <button class="add-room-btn no-print" onclick="addCustomRoom()">＋ その他の項目を追加</button>
   </div>
-  <div style="margin-top:20px; text-align:right; font-size:10pt; line-height:2;">
+  <div style="margin-top:20px;text-align:right;font-size:10pt;line-height:2;">
     <div>以上、報告いたします。</div>
     <div>ご不明な点についてはいつでもご相談ください。</div>
   </div>
@@ -167,36 +165,64 @@ input[type=file] { display:none; }
 <!-- アノテーションモーダル -->
 <div id="anno-modal">
   <div class="anno-toolbar">
-    <button class="tool-btn active" id="tool-select" onclick="setTool('select')">↖ 選択</button>
-    <button class="tool-btn" id="tool-arrow" onclick="setTool('arrow')">➤ 矢印</button>
-    <button class="tool-btn" id="tool-line" onclick="setTool('line')">― 線</button>
-    <button class="tool-btn" id="tool-rect" onclick="setTool('rect')">□ 四角</button>
-    <button class="tool-btn" id="tool-pen" onclick="setTool('pen')">✏️ ペン</button>
-    <button class="tool-btn" id="tool-text" onclick="setTool('text')">T テキスト</button>
-    <button class="tool-btn" id="tool-chair" onclick="setTool('chair')">🪑 椅子</button>
-    <input type="number" id="font-size" value="20" min="8" max="72" style="width:48px;padding:3px;border:1px solid #aaa;border-radius:4px;font-size:10pt;text-align:center;">
+    <button class="tool-btn active" id="tool-select" onclick="setAnnoTool('select')">↖ 選択</button>
+    <button class="tool-btn" id="tool-arrow"  onclick="setAnnoTool('arrow')">➤ 矢印</button>
+    <button class="tool-btn" id="tool-line"   onclick="setAnnoTool('line')">― 線</button>
+    <button class="tool-btn" id="tool-rect"   onclick="setAnnoTool('rect')">□ 四角</button>
+    <button class="tool-btn" id="tool-pen"    onclick="setAnnoTool('pen')">✏️ ペン</button>
+    <button class="tool-btn" id="tool-text"   onclick="setAnnoTool('text')">T テキスト</button>
+    <button class="tool-btn" id="tool-chair"  onclick="setAnnoTool('chair')">🪑 椅子</button>
+    <input type="number" id="font-size" value="24" min="10" max="72" style="width:48px;padding:3px;border:1px solid #aaa;border-radius:4px;font-size:10pt;text-align:center;">
+    <span style="color:#fff;font-size:9pt;">文字サイズ</span>
+    <span id="chair-size-wrap" style="display:flex;align-items:center;gap:4px;">
+      <span style="color:#fff;font-size:9pt;">🪑サイズ：</span>
+      <input type="range" id="chair-size-slider" min="5" max="60" value="18" style="width:80px;">
+      <span id="chair-size-val" style="color:#fff;font-size:9pt;">18</span>
+    </span>
     <div style="display:flex;gap:5px;align-items:center;">
-      <div class="anno-color active-color" style="background:#ff3333" onclick="setColor('#ff3333',this)"></div>
-      <div class="anno-color" style="background:#ffdd00" onclick="setColor('#ffdd00',this)"></div>
-      <div class="anno-color" style="background:#33cc33" onclick="setColor('#33cc33',this)"></div>
-      <div class="anno-color" style="background:#3399ff" onclick="setColor('#3399ff',this)"></div>
-      <div class="anno-color" style="background:#ffffff" onclick="setColor('#ffffff',this)"></div>
+      <div class="anno-color active-color" style="background:#ff3333" onclick="setAnnoColor('#ff3333',this)"></div>
+      <div class="anno-color" style="background:#ffdd00" onclick="setAnnoColor('#ffdd00',this)"></div>
+      <div class="anno-color" style="background:#33cc33" onclick="setAnnoColor('#33cc33',this)"></div>
+      <div class="anno-color" style="background:#3399ff" onclick="setAnnoColor('#3399ff',this)"></div>
+      <div class="anno-color" style="background:#ffffff" onclick="setAnnoColor('#ffffff',this)"></div>
     </div>
     <button class="anno-action-btn anno-undo-btn" onclick="undoAnno()">↩ 戻す</button>
     <button class="anno-action-btn anno-cancel-btn" onclick="closeAnno()">キャンセル</button>
     <button class="anno-action-btn anno-save-btn" onclick="saveAnno()">✔ 保存</button>
   </div>
-  <div id="anno-container">
-    <img id="anno-bg-img" alt="編集画像">
-    <svg id="anno-svg-overlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+  <div id="anno-canvas-wrap">
+    <canvas id="anno-canvas"></canvas>
+    <div id="anno-text-ui" style="display:none;position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:8px;padding:16px;width:260px;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.5);">
+      <div style="font-size:10pt;font-weight:bold;color:#111;margin-bottom:8px;">テキストを入力</div>
+      <input id="anno-text-inp" type="text" placeholder="テキスト入力"
+        style="display:block;width:100%;box-sizing:border-box;border:2px solid #2a7a4b;border-radius:4px;padding:8px;font-size:14pt;color:#111;margin-bottom:10px;outline:none;">
+      <div style="display:flex;gap:8px;">
+        <div id="anno-cancel-btn" style="flex:1;padding:10px;border-radius:4px;background:#888;color:#fff;font-size:11pt;cursor:pointer;text-align:center;user-select:none;">キャンセル</div>
+        <div id="anno-ok-btn" style="flex:1;padding:10px;border-radius:4px;background:#2a7a4b;color:#fff;font-size:11pt;cursor:pointer;text-align:center;user-select:none;">✔ 完了</div>
+      </div>
+    </div>
+  </div>
+  <div style="color:#aaa;font-size:9pt;padding:4px 8px;">
+    ペン：なぞって描画　テキスト：タップで入力　回転：図形選択後に回転ハンドルをドラッグ
   </div>
 </div>
 
-<!-- トリミング -->
+  <!-- テキスト入力UI：anno-modalの中に配置（position:fixedを使わない） -->
+  <div id="anno-text-ui" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; border-radius:8px; padding:20px; width:280px; max-width:90%; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,.5);">
+    <div style="font-size:11pt;margin-bottom:8px;font-weight:bold;color:#111;">テキストを入力</div>
+    <textarea id="anno-text-input" rows="3" placeholder="ここに入力"
+      style="width:100%;border:2px solid #2a7a4b;border-radius:4px;padding:8px;font-size:13pt;font-family:inherit;outline:none;margin-bottom:10px;resize:none;display:block;box-sizing:border-box;"></textarea>
+    <div style="display:flex;gap:8px;">
+      <input type="button" id="anno-cancel-btn" value="キャンセル"
+        style="flex:1;padding:10px;border:none;border-radius:4px;background:#888;color:#fff;font-size:11pt;cursor:pointer;">
+      <input type="button" id="anno-ok-btn" value="✔ 完了"
+        style="flex:1;padding:10px;border:none;border-radius:4px;background:#2a7a4b;color:#fff;font-size:12pt;cursor:pointer;">
+    </div>
+  </div>
 <div id="trim-modal">
   <div class="trim-toolbar">
     <span style="color:#fff;font-size:10pt;font-weight:bold;">✂️ トリミング</span>
-    <span style="color:#ccc;font-size:9pt;">白いハンドルをドラッグして調整</span>
+    <span style="color:#ccc;font-size:9pt;">白いハンドルをドラッグ</span>
     <button class="trim-reset-btn" onclick="resetTrim()">🔄 リセット</button>
     <button class="trim-cancel-btn" onclick="closeTrim()">キャンセル</button>
     <button class="trim-save-btn" onclick="saveTrim()">✔ 保存</button>
@@ -218,409 +244,587 @@ input[type=file] { display:none; }
 
 <div class="btn-bar no-print">
   <button class="btn-print" onclick="window.print()">🖨️ 印刷</button>
-  <button class="btn-pdf" onclick="openFilenameModal('pdf')">📄 PDFで保存</button>
-  <button class="btn-save" onclick="openFilenameModal('html')">💾 HTMLで保存</button>
+  <button class="btn-pdf"   onclick="openFilenameModal('pdf')">📄 PDFで保存</button>
+  <button class="btn-save"  onclick="openFilenameModal('html')">💾 HTMLで保存</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-// ===== 削除・復元 =====
+// ========== 削除・復元 ==========
 const deletedRooms = {};
 let customCount = 0;
 
 function deleteRoom(id, label) {
   const block = document.getElementById(id);
   if (!block) return;
-  deletedRooms[id] = { el: block, label };
+  deletedRooms[id] = { el:block, label };
   block.remove();
   document.getElementById('restore-bar').style.display = 'block';
   const btn = document.createElement('button');
-  btn.className = 'restore-btn'; btn.id = 'rb-' + id;
-  btn.textContent = '＋ ' + label;
+  btn.className='restore-btn'; btn.id='rb-'+id; btn.textContent='＋ '+label;
   btn.onclick = () => restoreRoom(id);
   document.getElementById('restore-btns').appendChild(btn);
 }
 function restoreRoom(id) {
-  const data = deletedRooms[id]; if (!data) return;
+  const d = deletedRooms[id]; if(!d) return;
   delete deletedRooms[id];
   const c = document.getElementById('rooms-container');
-  if (id.startsWith('room-')) {
-    const n = parseInt(id.replace('room-',''));
-    const all = Array.from(c.querySelectorAll('[id^=room-]'));
-    const next = all.find(b => parseInt(b.id.replace('room-','')) > n);
-    next ? c.insertBefore(data.el, next) : c.appendChild(data.el);
-  } else c.appendChild(data.el);
-  document.getElementById('rb-' + id)?.remove();
-  if (!document.getElementById('restore-btns').children.length)
-    document.getElementById('restore-bar').style.display = 'none';
+  if(id.startsWith('room-')){
+    const n=parseInt(id.replace('room-',''));
+    const all=Array.from(c.querySelectorAll('[id^=room-]'));
+    const next=all.find(b=>parseInt(b.id.replace('room-',''))>n);
+    next?c.insertBefore(d.el,next):c.appendChild(d.el);
+  } else c.appendChild(d.el);
+  document.getElementById('rb-'+id)?.remove();
+  if(!document.getElementById('restore-btns').children.length)
+    document.getElementById('restore-bar').style.display='none';
 }
 function addCustomRoom() {
   customCount++;
-  const id = 'custom-' + customCount;
-  const div = document.createElement('div');
-  div.className = 'room-block'; div.id = id;
-  div.innerHTML = `<div class="room-block-title"><input class="room-title-input" type="text" placeholder="タイトルを入力"><button class="room-del-btn no-print" onclick="deleteRoom('${id}','その他')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row"><input class="cell" type="text" placeholder="寸法・状況を入力" style="border-bottom:1px solid #888;"></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-${id}"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-${id}').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-${id}').click()">📷 カメラ</button></div><input type="file" id="fg-${id}" accept="image/*" multiple onchange="loadPhotos(this,'${id}')"><input type="file" id="fc-${id}" accept="image/*" capture="environment" onchange="loadPhotos(this,'${id}')"></div></div>`;
+  const id='custom-'+customCount;
+  const div=document.createElement('div');
+  div.className='room-block'; div.id=id;
+  div.innerHTML=`<div class="room-block-title"><input class="room-title-input" type="text" placeholder="タイトルを入力"><button class="room-del-btn no-print" onclick="deleteRoom('${id}','その他')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row"><input class="cell" type="text" placeholder="寸法・状況を入力" style="border-bottom:1px solid #888;"></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-${id}"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-${id}').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-${id}').click()">📷 カメラ</button></div><input type="file" id="fg-${id}" accept="image/*" multiple onchange="loadPhotos(this,'${id}')"><input type="file" id="fc-${id}" accept="image/*" capture="environment" onchange="loadPhotos(this,'${id}')"></div></div>`;
   document.getElementById('rooms-container').appendChild(div);
 }
 
-// ===== 写真 =====
+// ========== 写真 ==========
 function loadPhotos(input, roomId) {
-  const grid = document.getElementById('pg-' + roomId);
+  const grid = document.getElementById('pg-'+roomId);
   Array.from(input.files).forEach(file => {
     const reader = new FileReader();
     reader.onload = e => addPhotoThumb(grid, e.target.result);
     reader.readAsDataURL(file);
   });
-  input.value = '';
+  input.value='';
 }
-function addPhotoThumb(grid, src, shapesData, shapesScale) {
+function addPhotoThumb(grid, src, shapesData) {
   const thumb = document.createElement('div');
   thumb.className = 'photo-thumb';
   const img = document.createElement('img');
-  img.src = src; img.alt = '写真';
-  img.dataset.base = src;
-  if (shapesData) img.dataset.shapes = shapesData;
-  if (shapesScale) img.dataset.shapesScale = shapesScale;
-  const delBtn = document.createElement('button');
-  delBtn.className = 'del-btn no-print'; delBtn.textContent = '×';
-  delBtn.onclick = () => thumb.remove();
-  const editBtn = document.createElement('button');
-  editBtn.className = 'edit-btn no-print'; editBtn.textContent = '✏️ 編集';
-  editBtn.onclick = () => openAnno(img);
-  const trimBtn = document.createElement('button');
-  trimBtn.className = 'trim-btn no-print'; trimBtn.textContent = '✂️ トリミング';
-  trimBtn.onclick = () => openTrim(img);
+  img.src=src; img.alt='写真'; img.dataset.base=src;
+  if(shapesData) img.dataset.shapes=shapesData;
+  const delBtn=document.createElement('button');
+  delBtn.className='del-btn no-print'; delBtn.textContent='×';
+  delBtn.onclick=()=>thumb.remove();
+  const editBtn=document.createElement('button');
+  editBtn.className='edit-btn no-print'; editBtn.textContent='✏️ 編集';
+  editBtn.onclick=()=>openAnno(img);
+  const trimBtn=document.createElement('button');
+  trimBtn.className='trim-btn no-print'; trimBtn.textContent='✂️ トリミング';
+  trimBtn.onclick=()=>openTrim(img);
   thumb.appendChild(img); thumb.appendChild(delBtn);
   thumb.appendChild(editBtn); thumb.appendChild(trimBtn);
   grid.appendChild(thumb);
 }
 
-// ===== アノテーション（SVGオーバーレイ） =====
-let annoTool = 'select', annoColor = '#ff3333';
-let annoTargetImg = null;
-let shapes = [], selIdx = -1;
-let drawing = false, sx = 0, sy = 0, penPts = [];
-let dragOff = {x:0,y:0}, rotating = false, rotStart = 0;
-let tempEl = null;
+// ========== アノテーション（Canvas方式・完全版）==========
+let annoTool='select', annoColor='#ff3333';
+let annoTargetImg=null, annoCanvas=null, annoCtx=null;
+let annoBaseImage=null; // 元画像（書き込みなし）
+let annoShapes=[];      // 確定済み図形リスト
+let annoSelIdx=-1;
+// 操作状態
+let annoDown=false, annoRotating=false;
+let annoSx=0, annoSy=0, annoPts=[];
+let annoDragOff={x:0,y:0}, annoRotStart=0;
 
-const svgNS = 'http://www.w3.org/2000/svg';
-function mkSvg(tag, attrs) {
-  const el = document.createElementNS(svgNS, tag);
-  Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
-  return el;
+function setAnnoTool(t) {
+  annoTool=t;
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tool-'+t)?.classList.add('active');
+  if(annoCanvas) annoCanvas.style.cursor=(t==='select'?'default':'crosshair');
 }
-
-function setTool(t) {
-  annoTool = t;
-  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tool-' + t)?.classList.add('active');
-  const svg = document.getElementById('anno-svg-overlay');
-  if (svg) svg.style.cursor = t === 'select' ? 'default' : 'crosshair';
-}
-function setColor(c, el) {
-  annoColor = c;
-  document.querySelectorAll('.anno-color').forEach(e => e.classList.remove('active-color'));
+function setAnnoColor(c,el) {
+  annoColor=c;
+  document.querySelectorAll('.anno-color').forEach(e=>e.classList.remove('active-color'));
   el.classList.add('active-color');
-  if (selIdx >= 0) { shapes[selIdx].color = c; renderShapes(); }
+  if(annoSelIdx>=0){ annoShapes[annoSelIdx].color=c; redrawAnno(); }
 }
 
 function openAnno(imgEl) {
-  annoTargetImg = imgEl;
-  try { shapes = imgEl.dataset.shapes ? JSON.parse(imgEl.dataset.shapes) : []; } catch(e) { shapes = []; }
-  selIdx = -1; penPts = []; drawing = false; rotating = false;
+  annoTargetImg=imgEl;
+  try{ annoShapes=imgEl.dataset.shapes?JSON.parse(imgEl.dataset.shapes):[]; }catch(e){ annoShapes=[]; }
+  annoSelIdx=-1; annoDown=false; annoRotating=false;
 
-  const bgImg = document.getElementById('anno-bg-img');
-  bgImg.src = imgEl.dataset.base || imgEl.src;
+  annoCanvas=document.getElementById('anno-canvas');
+  annoCtx=annoCanvas.getContext('2d');
+
+  const src=imgEl.dataset.base||imgEl.src;
+  const img=new Image();
+  img.onload=()=>{
+    annoBaseImage=img;
+    const maxW=Math.min(window.innerWidth*0.96, 900);
+    const maxH=window.innerHeight*0.70;
+    const sc=Math.min(maxW/img.width, maxH/img.height, 1);
+    annoCanvas.width=Math.round(img.width*sc);
+    annoCanvas.height=Math.round(img.height*sc);
+    redrawAnno();
+  };
+  img.src=src;
 
   document.getElementById('anno-modal').classList.add('open');
-  setTool('select');
-  renderShapes();
+  setAnnoTool('select');
 }
 
-function getSvgPct(e) {
-  const svg = document.getElementById('anno-svg-overlay');
-  const r = svg.getBoundingClientRect();
-  const src = e.touches ? e.touches[0] : e;
-  return {
-    x: (src.clientX - r.left) / r.width * 100,
-    y: (src.clientY - r.top) / r.height * 100
-  };
+function redrawAnno() {
+  if(!annoCtx||!annoBaseImage) return;
+  annoCtx.clearRect(0,0,annoCanvas.width,annoCanvas.height);
+  annoCtx.drawImage(annoBaseImage,0,0,annoCanvas.width,annoCanvas.height);
+  annoShapes.forEach((s,i)=>drawAnnoShape(s,i===annoSelIdx));
 }
 
-function renderShapes() {
-  const svg = document.getElementById('anno-svg-overlay');
-  svg.innerHTML = '';
-  shapes.forEach((s, i) => svg.appendChild(buildSvgShape(s, i === selIdx)));
-}
+function drawAnnoShape(s,sel) {
+  const ctx=annoCtx;
+  ctx.save();
+  ctx.strokeStyle=s.color; ctx.fillStyle=s.color;
+  ctx.lineWidth=sel?3:2; ctx.lineCap='round'; ctx.lineJoin='round';
 
-function buildSvgShape(s, sel) {
-  const g = mkSvg('g', {});
-  const c = s.color || '#ff3333';
-  const lw = sel ? 2.5 : 1.5;
-
-  if (s.type === 'arrow') {
-    const mid = 'arr' + Math.random().toString(36).slice(2,6);
-    const defs = mkSvg('defs', {});
-    const mk = mkSvg('marker', {id:mid, markerWidth:'8', markerHeight:'6', refX:'7', refY:'3', orient:'auto'});
-    mk.appendChild(mkSvg('polygon', {points:'0 0,8 3,0 6', fill:c}));
-    defs.appendChild(mk); g.appendChild(defs);
-    g.appendChild(mkSvg('line', {x1:s.x1+'%',y1:s.y1+'%',x2:s.x2+'%',y2:s.y2+'%',stroke:c,'stroke-width':lw,'marker-end':`url(#${mid})`}));
-  } else if (s.type === 'line') {
-    g.appendChild(mkSvg('line', {x1:s.x1+'%',y1:s.y1+'%',x2:s.x2+'%',y2:s.y2+'%',stroke:c,'stroke-width':lw}));
-  } else if (s.type === 'rect') {
-    const cx = s.cx||((s.x1+s.x2)/2), cy = s.cy||((s.y1+s.y2)/2);
-    const w = Math.abs(s.x2-s.x1), h = Math.abs(s.y2-s.y1);
-    const ang = (s.angle||0)*180/Math.PI;
-    g.appendChild(mkSvg('rect', {x:(cx-w/2)+'%',y:(cy-h/2)+'%',width:w+'%',height:h+'%',fill:'none',stroke:c,'stroke-width':lw,transform:`rotate(${ang},${cx+'%'},${cy+'%'})`}));
-    if (sel) addRotHandle(g, s, cx, cy);
-  } else if (s.type === 'pen') {
-    const d = s.pts.map((p,i) => (i===0?'M':'L')+p.x+'% '+p.y+'%').join(' ');
-    g.appendChild(mkSvg('path', {d,fill:'none',stroke:c,'stroke-width':lw,'stroke-linecap':'round','stroke-linejoin':'round'}));
-  } else if (s.type === 'text') {
-    const fs = s.fontSize || 3;
-    const len = s.text.length * fs * 0.6 + 0.5;
-    g.appendChild(mkSvg('rect', {x:(s.x-0.2)+'%',y:(s.y-fs*0.95)+'%',width:len+'%',height:(fs*1.15)+'%',fill:'rgba(0,0,0,0.5)',rx:'0.2%'}));
-    const t = mkSvg('text', {x:s.x+'%',y:s.y+'%',fill:c,'font-size':fs+'%','font-weight':'bold','font-family':'Hiragino Sans,Meiryo,sans-serif'});
-    t.textContent = s.text; g.appendChild(t);
-  } else if (s.type === 'chair') {
-    const sz = s.size || 5, ang = (s.angle||0)*180/Math.PI;
-    const cg = mkSvg('g', {transform:`rotate(${ang},${s.cx+'%'},${s.cy+'%'})`,stroke:c,'stroke-width':lw,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'});
-    const sw = sz*0.8, sh = sz*0.7, lh = sz*0.7, bh = sz*1.0, bw = sz*0.68;
-    const cx = s.cx, cy = s.cy;
-    cg.appendChild(mkSvg('rect',{x:(cx-sw)+'%',y:(cy-sh)+'%',width:(sw*2)+'%',height:(sh*2)+'%'}));
-    [[cx-bw,cy-sh,cx-bw,cy-sh-bh],[cx+bw,cy-sh,cx+bw,cy-sh-bh],
-     [cx-bw,cy-sh-bh*0.3,cx+bw,cy-sh-bh*0.3],[cx-bw,cy-sh-bh,cx+bw,cy-sh-bh]]
-    .forEach(([x1,y1,x2,y2])=>cg.appendChild(mkSvg('line',{x1:x1+'%',y1:y1+'%',x2:x2+'%',y2:y2+'%'})));
-    [[cx-sw,cy-sh],[cx+sw,cy-sh],[cx-sw,cy+sh],[cx+sw,cy+sh]]
-    .forEach(([lx,ly])=>cg.appendChild(mkSvg('line',{x1:lx+'%',y1:ly+'%',x2:lx+'%',y2:(ly+lh)+'%'})));
-    cg.appendChild(mkSvg('line',{x1:(cx-sw)+'%',y1:(cy+sh+lh*0.5)+'%',x2:(cx+sw)+'%',y2:(cy+sh+lh*0.5)+'%'}));
-    g.appendChild(cg);
-    if (sel) addRotHandle(g, s, s.cx, s.cy);
+  if(s.type==='arrow'){
+    drawArrow(ctx,s.x1,s.y1,s.x2,s.y2,s.color);
+  } else if(s.type==='line'){
+    ctx.beginPath(); ctx.moveTo(s.x1,s.y1); ctx.lineTo(s.x2,s.y2); ctx.stroke();
+  } else if(s.type==='rect'){
+    ctx.translate(s.cx,s.cy); ctx.rotate(s.angle||0);
+    const hw=(s.x2-s.x1)/2, hh=(s.y2-s.y1)/2;
+    ctx.strokeRect(-hw,-hh,hw*2,hh*2);
+    if(sel){ drawHandle(ctx,0,0); drawRotHandleCanvas(ctx,s); }
+  } else if(s.type==='pen'){
+    ctx.beginPath();
+    s.pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+    ctx.stroke();
+  } else if(s.type==='text'){
+    const fs=s.fontSize||24;
+    ctx.font=`bold ${fs}px "Hiragino Sans","Noto Sans CJK JP","Meiryo",sans-serif`;
+    ctx.fillStyle='rgba(0,0,0,0.5)';
+    const tw=ctx.measureText(s.text).width;
+    ctx.fillRect(s.x-2,s.y-fs,tw+4,fs+4);
+    ctx.fillStyle=s.color;
+    ctx.fillText(s.text,s.x,s.y);
+  } else if(s.type==='chair'){
+    ctx.translate(s.cx,s.cy); ctx.rotate(s.angle||0);
+    const sz=s.size||40;
+    drawChairShape(ctx,sz,s.color);
+    if(sel){ drawHandle(ctx,0,0); drawRotHandleCanvas(ctx,s,true); }
   }
+  ctx.restore();
 
-  if (sel && s.type !== 'pen') {
-    const hx = s.cx!==undefined?s.cx:(s.x!==undefined?s.x:(s.x1+s.x2)/2);
-    const hy = s.cy!==undefined?s.cy:(s.y!==undefined?s.y:(s.y1+s.y2)/2);
-    g.appendChild(mkSvg('circle',{cx:hx+'%',cy:hy+'%',r:'1%',fill:'#fff',stroke:'#333','stroke-width':'0.4'}));
+  if(sel && (s.type==='arrow'||s.type==='line')){
+    drawHandle(ctx,s.x1,s.y1); drawHandle(ctx,s.x2,s.y2);
   }
-  return g;
 }
 
-function addRotHandle(g, s, cx, cy) {
-  const ang = s.angle||0, off = (s.size||5)*0.9;
-  const rx = cx - Math.sin(ang)*off, ry = cy - Math.cos(ang)*off;
-  g.appendChild(mkSvg('line',{x1:cx+'%',y1:cy+'%',x2:rx+'%',y2:ry+'%',stroke:'#aaa','stroke-width':'0.5'}));
-  g.appendChild(mkSvg('circle',{cx:rx+'%',cy:ry+'%',r:'1.5%',fill:'#4af',stroke:'#fff','stroke-width':'0.5'}));
+function drawArrow(ctx,x1,y1,x2,y2,color){
+  const hl=16,a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hl*Math.cos(a-Math.PI/6),y2-hl*Math.sin(a-Math.PI/6));
+  ctx.lineTo(x2-hl*Math.cos(a+Math.PI/6),y2-hl*Math.sin(a+Math.PI/6));
+  ctx.closePath(); ctx.fill();
+}
+function drawHandle(ctx,x,y){
+  ctx.save(); ctx.fillStyle='#fff'; ctx.strokeStyle='#333'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill(); ctx.stroke(); ctx.restore();
+}
+function drawRotHandleCanvas(ctx,s,local){
+  // 回転ハンドルを図形中心の上方に描画
+  const off=local?(s.size||40)*1.0:Math.max(Math.abs(s.y2-s.y1)/2+20,25);
+  ctx.save(); ctx.fillStyle='#4af'; ctx.strokeStyle='#fff'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(0,-off,7,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle='#aaf'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-off); ctx.stroke();
+  ctx.restore();
+}
+function drawChairShape(ctx,sz,color){
+  const sw=sz*0.8,sh=sz*0.7,lh=sz*0.7,bh=sz,bw=sz*0.68;
+  ctx.strokeStyle=color; ctx.lineWidth=2;
+  ctx.strokeRect(-sw,-sh,sw*2,sh*2);
+  [[-bw,-sh,-bw,-sh-bh],[bw,-sh,bw,-sh-bh],
+   [-bw,-sh-bh*0.3,bw,-sh-bh*0.3],[-bw,-sh-bh,bw,-sh-bh]]
+  .forEach(([x1,y1,x2,y2])=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();});
+  [[-sw,-sh],[sw,-sh],[-sw,sh],[sw,sh]]
+  .forEach(([lx,ly])=>{ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx,ly+lh);ctx.stroke();});
+  ctx.beginPath();ctx.moveTo(-sw,sh+lh*0.5);ctx.lineTo(sw,sh+lh*0.5);ctx.stroke();
 }
 
-function getRotHandleXY(s) {
-  const ang = s.angle||0, off = (s.size||5)*0.9;
-  const cx = s.cx||((s.x1+s.x2)/2), cy = s.cy||((s.y1+s.y2)/2);
-  return {x: cx - Math.sin(ang)*off, y: cy - Math.cos(ang)*off};
+function getCanvasPos(e){
+  const r=annoCanvas.getBoundingClientRect();
+  const src=e.touches?e.touches[0]:e;
+  return{x:(src.clientX-r.left)*(annoCanvas.width/r.width),
+         y:(src.clientY-r.top)*(annoCanvas.height/r.height)};
 }
 
-function hitTest(s, x, y) {
-  const D = 4;
-  if (s.type==='arrow'||s.type==='line') { const mx=(s.x1+s.x2)/2,my=(s.y1+s.y2)/2; return dP(mx,my,x,y)<D*2; }
-  if (s.type==='rect') { const cx=s.cx||((s.x1+s.x2)/2),cy=s.cy||((s.y1+s.y2)/2); return dP(cx,cy,x,y)<Math.max(Math.abs(s.x2-s.x1),Math.abs(s.y2-s.y1))/2+D; }
-  if (s.type==='pen') return s.pts.some(p=>dP(p.x,p.y,x,y)<D);
-  if (s.type==='text') return dP(s.x,s.y,x,y)<D*3;
-  if (s.type==='chair') return dP(s.cx,s.cy,x,y)<(s.size||5)*1.5;
+// 回転ハンドル位置（canvas座標）
+function getRotHandlePos(s){
+  if(s.type==='chair'){
+    const off=(s.size||40)*1.0;
+    const a=s.angle||0;
+    return{x:s.cx-off*Math.sin(a),y:s.cy-off*Math.cos(a)};
+  }
+  const cx=s.cx||(s.x1+s.x2)/2, cy=s.cy||(s.y1+s.y2)/2;
+  const off=Math.max(Math.abs(s.y2-s.y1)/2+20,25);
+  const a=s.angle||0;
+  return{x:cx-off*Math.sin(a),y:cy-off*Math.cos(a)};
+}
+function distC(x1,y1,x2,y2){return Math.sqrt((x2-x1)**2+(y2-y1)**2);}
+function hitAnno(s,x,y){
+  const D=16;
+  if(s.type==='arrow'||s.type==='line'){return distC((s.x1+s.x2)/2,(s.y1+s.y2)/2,x,y)<D*2;}
+  if(s.type==='rect'){const cx=s.cx||(s.x1+s.x2)/2,cy=s.cy||(s.y1+s.y2)/2;return distC(cx,cy,x,y)<Math.max(Math.abs(s.x2-s.x1),Math.abs(s.y2-s.y1))/2+D;}
+  if(s.type==='pen'){return s.pts.some(p=>distC(p.x,p.y,x,y)<D);}
+  if(s.type==='text'){return distC(s.x,s.y,x,y)<60;}
+  if(s.type==='chair'){return distC(s.cx,s.cy,x,y)<(s.size||40)*1.2;}
   return false;
 }
-function hitRot(s, x, y) {
-  if (s.type!=='rect'&&s.type!=='chair') return false;
-  const p = getRotHandleXY(s);
-  return dP(p.x,p.y,x,y)<3;
-}
-function dP(x1,y1,x2,y2){return Math.sqrt((x2-x1)**2+(y2-y1)**2);}
-function mvS(s,dx,dy){
+function moveAnno(s,dx,dy){
   if(s.type==='text'){s.x+=dx;s.y+=dy;}
   else if(s.type==='pen')s.pts.forEach(p=>{p.x+=dx;p.y+=dy;});
   else if(s.type==='chair'){s.cx+=dx;s.cy+=dy;}
-  else if(s.type==='rect'){s.x1+=dx;s.y1+=dy;s.x2+=dx;s.y2+=dy;if(s.cx!==undefined){s.cx+=dx;s.cy+=dy;}}
+  else if(s.type==='rect'){s.x1+=dx;s.y1+=dy;s.x2+=dx;s.y2+=dy;s.cx+=dx;s.cy+=dy;}
   else{s.x1+=dx;s.y1+=dy;s.x2+=dx;s.y2+=dy;}
 }
 
-// SVGイベント登録
-document.addEventListener('DOMContentLoaded', () => {
-  const svg = document.getElementById('anno-svg-overlay');
+function setupAnnoEvents(){
+  var old = document.getElementById('anno-canvas');
+  var neo = old.cloneNode(true);
+  old.parentNode.replaceChild(neo, old);
+  annoCanvas = neo;
+  annoCtx = annoCanvas.getContext('2d');
 
-  svg.addEventListener('mousedown', onDown);
-  svg.addEventListener('touchstart', onDown, {passive:false});
-  svg.addEventListener('mousemove', onMove);
-  svg.addEventListener('touchmove', onMove, {passive:false});
-  svg.addEventListener('mouseup', onUp);
-  svg.addEventListener('touchend', onUp, {passive:false});
+  // テキストUI要素
+  var textUI  = document.getElementById('anno-text-ui');
+  var textInp = document.getElementById('anno-text-inp');
+  var okBtn   = document.getElementById('anno-ok-btn');
+  var canBtn  = document.getElementById('anno-cancel-btn');
+  var textPx = 0, textPy = 0;
 
-  function onDown(e) {
-    if(e.type==='touchstart') e.preventDefault();
-    const p = getSvgPct(e);
-    if (annoTool==='select') {
-      // 回転ハンドルを最優先でチェック
-      if (selIdx>=0) {
-        const s = shapes[selIdx];
-        const rp = getRotHandleXY(s);
-        if (dP(rp.x, rp.y, p.x, p.y) < 5) {
-          rotating = true; drawing = false;
-          const cx = s.cx||((s.x1+s.x2)/2), cy = s.cy||((s.y1+s.y2)/2);
-          rotStart = Math.atan2(p.y - cy, p.x - cx) - (s.angle||0);
+  function showTextUI(x, y){
+    textPx = x; textPy = y;
+    textInp.value = '';
+    textUI.style.display = 'block';
+    textInp.focus();
+  }
+  function commitText(){
+    var txt = textInp.value.trim();
+    textUI.style.display = 'none';
+    textInp.value = '';
+    if(txt){
+      var fs = parseInt(document.getElementById('font-size').value)||24;
+      annoShapes.push({type:'text', x:textPx, y:textPy, text:txt, color:annoColor, fontSize:fs});
+      redrawAnno();
+    }
+  }
+  function cancelText(){
+    textUI.style.display = 'none';
+    textInp.value = '';
+  }
+
+  // ボタンはdivなのでmousedown/touchstartで処理
+  okBtn.addEventListener('mousedown',  function(e){ e.stopPropagation(); e.preventDefault(); commitText(); });
+  okBtn.addEventListener('touchstart', function(e){ e.stopPropagation(); e.preventDefault(); commitText(); }, {passive:false});
+  canBtn.addEventListener('mousedown',  function(e){ e.stopPropagation(); e.preventDefault(); cancelText(); });
+  canBtn.addEventListener('touchstart', function(e){ e.stopPropagation(); e.preventDefault(); cancelText(); }, {passive:false});
+
+  // Enterキー
+  textInp.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); commitText(); }
+    if(e.key === 'Escape'){ cancelText(); }
+  });
+
+  // textUI全体のイベントがcanvasに漏れないよう止める
+  textUI.addEventListener('mousedown',  function(e){ e.stopPropagation(); });
+  textUI.addEventListener('touchstart', function(e){ e.stopPropagation(); }, {passive:true});
+
+  function isTextUIVisible(){ return textUI.style.display !== 'none'; }
+
+  function syncChairSlider(){
+    if(annoSelIdx >= 0 && annoShapes[annoSelIdx] && annoShapes[annoSelIdx].type === 'chair'){
+      var sz = annoShapes[annoSelIdx].size || 18;
+      slider.value = sz;
+      sliderVal.textContent = sz;
+    }
+  }
+
+  function getPos(e){
+    var r = annoCanvas.getBoundingClientRect();
+    var src = e.touches ? e.touches[0] : e;
+    return {
+      x: (src.clientX - r.left) * (annoCanvas.width  / r.width),
+      y: (src.clientY - r.top)  * (annoCanvas.height / r.height)
+    };
+  }
+
+  annoCanvas.addEventListener('mousedown', function(e){
+    if(isTextUIVisible()){ commitText(); return; }
+    if(annoTool !== 'text') e.preventDefault();
+    var p = getPos(e);
+    if(annoTool === 'text'){ showTextUI(p.x, p.y); return; }
+    if(annoTool === 'chair'){
+      var sz = parseInt(document.getElementById('chair-size-slider').value)||18;
+      annoShapes.push({type:'chair',cx:p.x,cy:p.y,size:sz,angle:0,color:annoColor});
+      redrawAnno(); return;
+    }
+    if(annoTool === 'select'){
+      if(annoSelIdx >= 0){
+        var s = annoShapes[annoSelIdx];
+        if(s.type==='rect'||s.type==='chair'){
+          var rp = getRotHandlePos(s);
+          if(distC(rp.x,rp.y,p.x,p.y) < 20){ annoRotating=true; annoDown=false; var cx=s.cx||(s.x1+s.x2)/2,cy=s.cy||(s.y1+s.y2)/2; annoRotStart=Math.atan2(p.y-cy,p.x-cx)-(s.angle||0); return; }
+        }
+      }
+      annoRotating=false;
+      var prev=annoSelIdx; annoSelIdx=-1;
+      for(var i=annoShapes.length-1;i>=0;i--){ if(hitAnno(annoShapes[i],p.x,p.y)){annoSelIdx=i;break;} }
+      if(annoSelIdx>=0){annoDragOff={x:p.x,y:p.y};annoDown=true;}
+      if(prev!==annoSelIdx) redrawAnno();
+      return;
+    }
+    annoDown=true; annoSx=p.x; annoSy=p.y;
+    if(annoTool==='pen') annoPts=[{x:p.x,y:p.y}];
+  });
+
+  annoCanvas.addEventListener('touchstart', function(e){
+    if(isTextUIVisible()){ commitText(); return; }
+    e.preventDefault();
+    var p = getPos(e);
+    if(annoTool === 'text'){ showTextUI(p.x, p.y); return; }
+    if(annoTool === 'chair'){
+      var sz2 = parseInt(document.getElementById('chair-size-slider').value)||18;
+      annoShapes.push({type:'chair',cx:p.x,cy:p.y,size:sz2,angle:0,color:annoColor});
+      redrawAnno(); return;
+    }
+    if(annoTool === 'select'){
+      if(annoSelIdx >= 0){
+        var s = annoShapes[annoSelIdx];
+        if(s.type==='rect'||s.type==='chair'){
+          var rp = getRotHandlePos(s);
+          if(distC(rp.x,rp.y,p.x,p.y) < 20){ annoRotating=true; annoDown=false; var cx=s.cx||(s.x1+s.x2)/2,cy=s.cy||(s.y1+s.y2)/2; annoRotStart=Math.atan2(p.y-cy,p.x-cx)-(s.angle||0); return; }
+        }
+      }
+      annoRotating=false;
+      var prev=annoSelIdx; annoSelIdx=-1;
+      for(var i=annoShapes.length-1;i>=0;i--){ if(hitAnno(annoShapes[i],p.x,p.y)){annoSelIdx=i;break;} }
+      if(annoSelIdx>=0){annoDragOff={x:p.x,y:p.y};annoDown=true;}
+      if(prev !== annoSelIdx){
+        redrawAnno();
+        if(annoSelIdx >= 0 && annoShapes[annoSelIdx] && annoShapes[annoSelIdx].type === 'chair'){
+          slider.value = annoShapes[annoSelIdx].size || 18;
+          sliderVal.textContent = slider.value;
+        }
+      }
+      return;
+    }
+    annoDown=true; annoSx=p.x; annoSy=p.y;
+    if(annoTool==='pen') annoPts=[{x:p.x,y:p.y}];
+  }, {passive:false});
+
+  function onMove(e){
+    if(isTextUIVisible()) return;
+    e.preventDefault();
+    var p = getPos(e);
+    if(annoRotating && annoSelIdx>=0){
+      var s=annoShapes[annoSelIdx];
+      var cx=s.cx||(s.x1+s.x2)/2, cy=s.cy||(s.y1+s.y2)/2;
+      s.angle=Math.atan2(p.y-cy,p.x-cx)-annoRotStart;
+      if(s.type==='rect'){s.cx=cx;s.cy=cy;}
+      redrawAnno(); return;
+    }
+    if(!annoDown) return;
+    if(annoTool==='select'&&annoSelIdx>=0){
+      moveAnno(annoShapes[annoSelIdx],p.x-annoDragOff.x,p.y-annoDragOff.y);
+      annoDragOff={x:p.x,y:p.y}; redrawAnno(); return;
+    }
+    redrawAnno();
+    annoCtx.save();
+    annoCtx.strokeStyle=annoColor; annoCtx.fillStyle=annoColor; annoCtx.lineWidth=2; annoCtx.lineCap='round';
+    if(annoTool==='pen'){ annoPts.push({x:p.x,y:p.y}); annoCtx.beginPath(); annoPts.forEach(function(pt,i){i===0?annoCtx.moveTo(pt.x,pt.y):annoCtx.lineTo(pt.x,pt.y);}); annoCtx.stroke(); }
+    else if(annoTool==='arrow'){ drawArrow(annoCtx,annoSx,annoSy,p.x,p.y,annoColor); }
+    else if(annoTool==='line'){ annoCtx.beginPath();annoCtx.moveTo(annoSx,annoSy);annoCtx.lineTo(p.x,p.y);annoCtx.stroke(); }
+    else if(annoTool==='rect'){ annoCtx.strokeRect(annoSx,annoSy,p.x-annoSx,p.y-annoSy); }
+    annoCtx.restore();
+  }
+  annoCanvas.addEventListener('mousemove',  onMove);
+  annoCanvas.addEventListener('touchmove',  onMove, {passive:false});
+
+  function onUp(e){
+    if(isTextUIVisible()) return;
+    e.preventDefault();
+    annoRotating=false;
+    if(!annoDown) return;
+    annoDown=false;
+    var r=annoCanvas.getBoundingClientRect();
+    var src=e.changedTouches?e.changedTouches[0]:e;
+    var ex=(src.clientX-r.left)*(annoCanvas.width/r.width);
+    var ey=(src.clientY-r.top)*(annoCanvas.height/r.height);
+    if(annoTool==='arrow') annoShapes.push({type:'arrow',x1:annoSx,y1:annoSy,x2:ex,y2:ey,color:annoColor});
+    else if(annoTool==='line') annoShapes.push({type:'line',x1:annoSx,y1:annoSy,x2:ex,y2:ey,color:annoColor});
+    else if(annoTool==='rect'){ var cx=(annoSx+ex)/2,cy=(annoSy+ey)/2; annoShapes.push({type:'rect',x1:annoSx,y1:annoSy,x2:ex,y2:ey,cx:cx,cy:cy,angle:0,color:annoColor}); }
+    else if(annoTool==='pen') annoShapes.push({type:'pen',pts:annoPts.slice(),color:annoColor});
+    redrawAnno();
+  }
+  annoCanvas.addEventListener('mouseup',  onUp);
+  annoCanvas.addEventListener('touchend', onUp, {passive:false});
+}
+
+function onAD(e){
+  // テキスト入力中はcanvasイベントを無視（blurで確定させる）
+  const inp = document.getElementById('anno-text-input');
+  if(inp && inp.style.display !== 'none') return;
+
+  if(annoTool !== 'text') e.preventDefault();
+  const p=getCanvasPos(e);
+
+  if(annoTool==='text'){
+    var inp2 = document.getElementById('anno-text-input');
+    if(inp2 && inp2.style.display !== 'none') return;
+    _initTextUI();
+    _textActive = true;
+    _textPx = p.x;
+    _textPy = p.y;
+    inp2.value = '';
+    inp2.style.display = 'block';
+    setTimeout(function(){ inp2.focus(); }, 30);
+    return;
+  }
+  if(annoTool==='chair'){
+    annoShapes.push({type:'chair',cx:p.x,cy:p.y,size:40,angle:0,color:annoColor});
+    redrawAnno(); return;
+  }
+  if(annoTool==='select'){
+    // 回転ハンドルチェック
+    if(annoSelIdx>=0){
+      const s=annoShapes[annoSelIdx];
+      if(s.type==='rect'||s.type==='chair'){
+        const rp=getRotHandlePos(s);
+        if(distC(rp.x,rp.y,p.x,p.y)<20){
+          annoRotating=true; annoDown=false;
+          const cx=s.cx||(s.x1+s.x2)/2, cy=s.cy||(s.y1+s.y2)/2;
+          annoRotStart=Math.atan2(p.y-cy,p.x-cx)-(s.angle||0);
           return;
         }
       }
-      selIdx=-1; rotating=false;
-      for(let i=shapes.length-1;i>=0;i--){if(hitTest(shapes[i],p.x,p.y)){selIdx=i;break;}}
-      if(selIdx>=0){dragOff={x:p.x,y:p.y};drawing=true;}
-      renderShapes();
-    } else if(annoTool==='text') {
-      const txt=prompt('テキストを入力');
-      if(txt){const fs=parseFloat(((parseInt(document.getElementById('font-size').value)||20)/svg.getBoundingClientRect().height*100).toFixed(2));shapes.push({type:'text',x:p.x,y:p.y,text:txt,color:annoColor,fontSize:Math.max(2,fs)});renderShapes();}
-    } else if(annoTool==='chair') {
-      shapes.push({type:'chair',cx:p.x,cy:p.y,size:5,angle:0,color:annoColor}); renderShapes();
-    } else { drawing=true; sx=p.x; sy=p.y; if(annoTool==='pen') penPts=[{x:p.x,y:p.y}]; }
-  }
-
-  function onMove(e) {
-    if(e.type==='touchmove') e.preventDefault();
-    const p = getSvgPct(e);
-    if(rotating && selIdx>=0){
-      const s = shapes[selIdx];
-      const cx = s.cx||((s.x1+s.x2)/2), cy = s.cy||((s.y1+s.y2)/2);
-      const newAngle = Math.atan2(p.y - cy, p.x - cx) - rotStart;
-      s.angle = newAngle;
-      // rectはcx/cyを常に保持
-      if(s.type==='rect') { s.cx = cx; s.cy = cy; }
-      renderShapes();
-      return;
     }
-    if(!drawing) return;
-    if(annoTool==='select'&&selIdx>=0){mvS(shapes[selIdx],p.x-dragOff.x,p.y-dragOff.y);dragOff=p;renderShapes();}
-    else if(annoTool==='pen'){
-      penPts.push({x:p.x,y:p.y});
-      if(tempEl)tempEl.remove();
-      const d=penPts.map((pt,i)=>(i===0?'M':'L')+pt.x+'% '+pt.y+'%').join(' ');
-      tempEl=mkSvg('path',{d,fill:'none',stroke:annoColor,'stroke-width':'1.5','stroke-linecap':'round'});
-      svg.appendChild(tempEl);
-    } else {
-      if(tempEl)tempEl.remove(); tempEl=null;
-      if(annoTool==='arrow'){
-        const id='ta'+Date.now();
-        const g=mkSvg('g',{}); const defs=mkSvg('defs',{});
-        const mk=mkSvg('marker',{id,markerWidth:'8',markerHeight:'6',refX:'7',refY:'3',orient:'auto'});
-        mk.appendChild(mkSvg('polygon',{points:'0 0,8 3,0 6',fill:annoColor}));
-        defs.appendChild(mk);g.appendChild(defs);
-        g.appendChild(mkSvg('line',{x1:sx+'%',y1:sy+'%',x2:p.x+'%',y2:p.y+'%',stroke:annoColor,'stroke-width':'1.5','marker-end':`url(#${id})`}));
-        tempEl=g; svg.appendChild(tempEl);
-      } else if(annoTool==='line'){
-        tempEl=mkSvg('line',{x1:sx+'%',y1:sy+'%',x2:p.x+'%',y2:p.y+'%',stroke:annoColor,'stroke-width':'1.5'});
-        svg.appendChild(tempEl);
-      } else if(annoTool==='rect'){
-        const w=p.x-sx,h=p.y-sy;
-        tempEl=mkSvg('rect',{x:Math.min(sx,p.x)+'%',y:Math.min(sy,p.y)+'%',width:Math.abs(w)+'%',height:Math.abs(h)+'%',fill:'none',stroke:annoColor,'stroke-width':'1.5'});
-        svg.appendChild(tempEl);
-      }
-    }
+    annoRotating=false;
+    const prev=annoSelIdx; annoSelIdx=-1;
+    for(let i=annoShapes.length-1;i>=0;i--){if(hitAnno(annoShapes[i],p.x,p.y)){annoSelIdx=i;break;}}
+    if(annoSelIdx>=0){annoDragOff={x:p.x,y:p.y};annoDown=true;}
+    if(prev!==annoSelIdx)redrawAnno();
+    return;
   }
+  annoDown=true; annoSx=p.x; annoSy=p.y;
+  if(annoTool==='pen')annoPts=[{x:p.x,y:p.y}];
+}
 
-  function onUp(e) {
-    if(e.type==='touchend') e.preventDefault();
-    rotating=false;
-    if(tempEl){tempEl.remove();tempEl=null;}
-    if(!drawing) return;
-    drawing=false;
-    const r=svg.getBoundingClientRect();
-    const src=e.changedTouches?e.changedTouches[0]:e;
-    const ex=(src.clientX-r.left)/r.width*100, ey=(src.clientY-r.top)/r.height*100;
-    if(annoTool==='arrow')shapes.push({type:'arrow',x1:sx,y1:sy,x2:ex,y2:ey,color:annoColor});
-    else if(annoTool==='line')shapes.push({type:'line',x1:sx,y1:sy,x2:ex,y2:ey,color:annoColor});
-    else if(annoTool==='rect'){const cx=(sx+ex)/2,cy=(sy+ey)/2;shapes.push({type:'rect',x1:sx,y1:sy,x2:ex,y2:ey,cx,cy,angle:0,color:annoColor});}
-    else if(annoTool==='pen')shapes.push({type:'pen',pts:[...penPts],color:annoColor});
-    renderShapes();
+function onAM(e){
+  const inp = document.getElementById('anno-text-input');
+  if(inp && inp.style.display !== 'none') return;
+  e.preventDefault();
+  const p=getCanvasPos(e);
+  if(annoRotating&&annoSelIdx>=0){
+    const s=annoShapes[annoSelIdx];
+    const cx=s.cx||(s.x1+s.x2)/2, cy=s.cy||(s.y1+s.y2)/2;
+    s.angle=Math.atan2(p.y-cy,p.x-cx)-annoRotStart;
+    if(s.type==='rect'){s.cx=cx;s.cy=cy;}
+    redrawAnno(); return;
   }
-});
+  if(!annoDown)return;
+  if(annoTool==='select'&&annoSelIdx>=0){
+    moveAnno(annoShapes[annoSelIdx],p.x-annoDragOff.x,p.y-annoDragOff.y);
+    annoDragOff={x:p.x,y:p.y}; redrawAnno(); return;
+  }
+  // プレビュー描画
+  redrawAnno();
+  annoCtx.save();
+  annoCtx.strokeStyle=annoColor; annoCtx.fillStyle=annoColor;
+  annoCtx.lineWidth=2; annoCtx.lineCap='round';
+  if(annoTool==='pen'){
+    annoPts.push({x:p.x,y:p.y});
+    annoCtx.beginPath();
+    annoPts.forEach((pt,i)=>i===0?annoCtx.moveTo(pt.x,pt.y):annoCtx.lineTo(pt.x,pt.y));
+    annoCtx.stroke();
+  } else if(annoTool==='arrow'){
+    drawArrow(annoCtx,annoSx,annoSy,p.x,p.y,annoColor);
+  } else if(annoTool==='line'){
+    annoCtx.beginPath();annoCtx.moveTo(annoSx,annoSy);annoCtx.lineTo(p.x,p.y);annoCtx.stroke();
+  } else if(annoTool==='rect'){
+    annoCtx.strokeRect(annoSx,annoSy,p.x-annoSx,p.y-annoSy);
+  }
+  annoCtx.restore();
+}
 
-function undoAnno(){if(shapes.length){shapes.pop();selIdx=-1;renderShapes();}}
+function onAU(e){
+  const inp = document.getElementById('anno-text-input');
+  if(inp && inp.style.display !== 'none') return;
+  e.preventDefault();
+  annoRotating=false;
+  if(!annoDown)return;
+  annoDown=false;
+  const r=annoCanvas.getBoundingClientRect();
+  const src=e.changedTouches?e.changedTouches[0]:e;
+  const ex=(src.clientX-r.left)*(annoCanvas.width/r.width);
+  const ey=(src.clientY-r.top)*(annoCanvas.height/r.height);
+  if(annoTool==='arrow')annoShapes.push({type:'arrow',x1:annoSx,y1:annoSy,x2:ex,y2:ey,color:annoColor});
+  else if(annoTool==='line')annoShapes.push({type:'line',x1:annoSx,y1:annoSy,x2:ex,y2:ey,color:annoColor});
+  else if(annoTool==='rect'){
+    const cx=(annoSx+ex)/2,cy=(annoSy+ey)/2;
+    annoShapes.push({type:'rect',x1:annoSx,y1:annoSy,x2:ex,y2:ey,cx,cy,angle:0,color:annoColor});
+  }
+  else if(annoTool==='pen')annoShapes.push({type:'pen',pts:[...annoPts],color:annoColor});
+  redrawAnno();
+}
+
+function undoAnno(){if(annoShapes.length){annoShapes.pop();annoSelIdx=-1;redrawAnno();}}
 
 function saveAnno(){
-  selIdx=-1; renderShapes();
-  // SVGデータをdatasetに保存、表示はSVGオーバーレイ付き画像として合成
-  const bgImg = document.getElementById('anno-bg-img');
-  const svg = document.getElementById('anno-svg-overlay');
-  const w = bgImg.naturalWidth||bgImg.clientWidth||800;
-  const h = bgImg.naturalHeight||bgImg.clientHeight||600;
-
-  const svgClone = svg.cloneNode(true);
-  svgClone.setAttribute('width', w);
-  svgClone.setAttribute('height', h);
-  svgClone.setAttribute('viewBox','0 0 100 100');
-  svgClone.setAttribute('preserveAspectRatio','none');
-  svgClone.removeAttribute('style');
-
-  const serialized = new XMLSerializer().serializeToString(svgClone);
-  const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(serialized);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext('2d');
-
-  const bgNew = new Image();
-  bgNew.onload = () => {
-    ctx.drawImage(bgNew, 0, 0, w, h);
-    const svgImg = new Image();
-    svgImg.onload = () => {
-      ctx.drawImage(svgImg, 0, 0, w, h);
-      const out = canvas.toDataURL('image/png');
-      annoTargetImg.src = out;
-      annoTargetImg.dataset.base = annoTargetImg.dataset.base || bgImg.src;
-      annoTargetImg.dataset.shapes = JSON.stringify(shapes);
-      closeAnno();
-    };
-    svgImg.onerror = () => {
-      annoTargetImg.dataset.shapes = JSON.stringify(shapes);
-      closeAnno();
-    };
-    svgImg.src = svgUrl;
-  };
-  bgNew.src = bgImg.src;
+  annoSelIdx=-1; redrawAnno();
+  annoTargetImg.src=annoCanvas.toDataURL('image/png');
+  annoTargetImg.dataset.shapes=JSON.stringify(annoShapes);
+  closeAnno();
 }
-function closeAnno(){ document.getElementById('anno-modal').classList.remove('open'); }
+function closeAnno(){document.getElementById('anno-modal').classList.remove('open');}
 
-// ===== トリミング =====
-let trimCanvas, trimCtx, trimSrcImg, trimThumbImg;
-let trimCrop={l:0,t:0,r:0,b:0}, trimDragHandle=null, trimDragStart=null;
-const HS=16;
+function openAnno(imgEl){
+  annoTargetImg=imgEl;
+  try{annoShapes=imgEl.dataset.shapes?JSON.parse(imgEl.dataset.shapes):[];}catch(e){annoShapes=[];}
+  annoSelIdx=-1; annoDown=false; annoRotating=false;
 
-function openTrim(imgEl){
-  trimThumbImg=imgEl;
-  trimCanvas=document.getElementById('trim-canvas');
-  trimCtx=trimCanvas.getContext('2d');
+  // 先にcanvasを取得してからイベント登録
+  annoCanvas=document.getElementById('anno-canvas');
+  annoCtx=annoCanvas.getContext('2d');
+
+  document.getElementById('anno-modal').classList.add('open');
+  setAnnoTool('select');
+  setupAnnoEvents();
+
+  const src=imgEl.dataset.base||imgEl.src;
   const img=new Image();
   img.onload=()=>{
-    trimSrcImg=img;
-    const mw=window.innerWidth*.92,mh=window.innerHeight*.63;
-    const sc=Math.min(mw/img.width,mh/img.height,1);
-    trimCanvas.width=Math.round(img.width*sc);
-    trimCanvas.height=Math.round(img.height*sc);
-    trimCrop={l:0,t:0,r:0,b:0};
-    drawTrim();
+    annoBaseImage=img;
+    const maxW=Math.min(window.innerWidth*0.96,900);
+    const maxH=window.innerHeight*0.70;
+    const sc=Math.min(maxW/img.width,maxH/img.height,1);
+    annoCanvas.width=Math.round(img.width*sc);
+    annoCanvas.height=Math.round(img.height*sc);
+    annoCtx=annoCanvas.getContext('2d');
+    redrawAnno();
   };
+  img.src=src;
+}
+
+// ========== トリミング ==========
+let trimCanvas,trimCtx,trimSrcImg,trimThumbImg;
+let trimCrop={l:0,t:0,r:0,b:0},trimDragHandle=null,trimDragStart=null;
+const HS=16;
+function openTrim(imgEl){
+  trimThumbImg=imgEl; trimCanvas=document.getElementById('trim-canvas'); trimCtx=trimCanvas.getContext('2d');
+  const img=new Image();
+  img.onload=()=>{trimSrcImg=img;const mw=window.innerWidth*.92,mh=window.innerHeight*.63;const sc=Math.min(mw/img.width,mh/img.height,1);trimCanvas.width=Math.round(img.width*sc);trimCanvas.height=Math.round(img.height*sc);trimCrop={l:0,t:0,r:0,b:0};drawTrim();};
   img.src=imgEl.dataset.base||imgEl.src;
   document.getElementById('trim-modal').classList.add('open');
 }
-function drawTrim(){
-  const W=trimCanvas.width,H=trimCanvas.height,{l,t,r,b}=trimCrop;
-  trimCtx.clearRect(0,0,W,H);
-  trimCtx.drawImage(trimSrcImg,0,0,W,H);
-  trimCtx.fillStyle='rgba(0,0,0,0.55)';
-  if(l>0)trimCtx.fillRect(0,0,l,H);
-  if(r>0)trimCtx.fillRect(W-r,0,r,H);
-  if(t>0)trimCtx.fillRect(l,0,W-l-r,t);
-  if(b>0)trimCtx.fillRect(l,H-b,W-l-r,b);
-  trimCtx.strokeStyle='#fff';trimCtx.lineWidth=2;
-  trimCtx.strokeRect(l,t,W-l-r,H-t-b);
-  getHandles(l,t,W-l-r,H-t-b).forEach(h=>{trimCtx.fillStyle='#fff';trimCtx.fillRect(h.x-HS/2,h.y-HS/2,HS,HS);});
-}
+function drawTrim(){const W=trimCanvas.width,H=trimCanvas.height,{l,t,r,b}=trimCrop;trimCtx.clearRect(0,0,W,H);trimCtx.drawImage(trimSrcImg,0,0,W,H);trimCtx.fillStyle='rgba(0,0,0,0.55)';if(l>0)trimCtx.fillRect(0,0,l,H);if(r>0)trimCtx.fillRect(W-r,0,r,H);if(t>0)trimCtx.fillRect(l,0,W-l-r,t);if(b>0)trimCtx.fillRect(l,H-b,W-l-r,b);trimCtx.strokeStyle='#fff';trimCtx.lineWidth=2;trimCtx.strokeRect(l,t,W-l-r,H-t-b);getHandles(l,t,W-l-r,H-t-b).forEach(h=>{trimCtx.fillStyle='#fff';trimCtx.fillRect(h.x-HS/2,h.y-HS/2,HS,HS);});}
 function getHandles(x,y,w,h){const mx=x+w/2,my=y+h/2,r=x+w,b=y+h;return[{id:'tl',x,y},{id:'tc',x:mx,y},{id:'tr',x:r,y},{id:'ml',x,y:my},{id:'mr',x:r,y:my},{id:'bl',x,y:b},{id:'bc',x:mx,y:b},{id:'br',x:r,y:b}];}
 function getTrimPos(e){const r=trimCanvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:src.clientX-r.left,y:src.clientY-r.top};}
 function hitHandle(p){const W=trimCanvas.width,H=trimCanvas.height,{l,t,r,b}=trimCrop;return getHandles(l,t,W-l-r,H-t-b).find(h=>Math.abs(h.x-p.x)<HS&&Math.abs(h.y-p.y)<HS)||null;}
@@ -629,19 +833,10 @@ trimCanvas=document.getElementById('trim-canvas');
 ['mousemove','touchmove'].forEach(ev=>trimCanvas.addEventListener(ev,e=>{if(ev==='touchmove')e.preventDefault();const p=getTrimPos(e);if(!trimDragHandle||!trimDragStart)return;const W=trimCanvas.width,H=trimCanvas.height,dx=p.x-trimDragStart.x,dy=p.y-trimDragStart.y,id=trimDragHandle.id,MIN=20,nc={...trimCrop};if(id.includes('l'))nc.l=Math.max(0,Math.min(trimCrop.l+dx,W-trimCrop.r-MIN));if(id.includes('r'))nc.r=Math.max(0,Math.min(trimCrop.r-dx,W-trimCrop.l-MIN));if(id.includes('t'))nc.t=Math.max(0,Math.min(trimCrop.t+dy,H-trimCrop.b-MIN));if(id.includes('b'))nc.b=Math.max(0,Math.min(trimCrop.b-dy,H-trimCrop.t-MIN));trimCrop=nc;trimDragStart=p;drawTrim();},{passive:false}));
 ['mouseup','touchend'].forEach(ev=>trimCanvas.addEventListener(ev,()=>{trimDragHandle=null;trimDragStart=null;}));
 function resetTrim(){trimCrop={l:0,t:0,r:0,b:0};drawTrim();}
-function saveTrim(){
-  const W=trimCanvas.width,H=trimCanvas.height,{l,t,r,b}=trimCrop,cw=W-l-r,ch=H-t-b;
-  if(cw<10||ch<10){alert('範囲が小さすぎます');return;}
-  const out=document.createElement('canvas');out.width=cw;out.height=ch;
-  out.getContext('2d').drawImage(trimSrcImg,(l/W)*trimSrcImg.width,(t/H)*trimSrcImg.height,(cw/W)*trimSrcImg.width,(ch/H)*trimSrcImg.height,0,0,cw,ch);
-  const ns=out.toDataURL('image/png');
-  trimThumbImg.src=ns;trimThumbImg.dataset.base=ns;
-  delete trimThumbImg.dataset.shapes;delete trimThumbImg.dataset.shapesScale;
-  closeTrim();
-}
+function saveTrim(){const W=trimCanvas.width,H=trimCanvas.height,{l,t,r,b}=trimCrop,cw=W-l-r,ch=H-t-b;if(cw<10||ch<10){alert('範囲が小さすぎます');return;}const out=document.createElement('canvas');out.width=cw;out.height=ch;out.getContext('2d').drawImage(trimSrcImg,(l/W)*trimSrcImg.width,(t/H)*trimSrcImg.height,(cw/W)*trimSrcImg.width,(ch/H)*trimSrcImg.height,0,0,cw,ch);const ns=out.toDataURL('image/png');trimThumbImg.src=ns;trimThumbImg.dataset.base=ns;delete trimThumbImg.dataset.shapes;closeTrim();}
 function closeTrim(){document.getElementById('trim-modal').classList.remove('open');}
 
-// ===== ファイル名モーダル =====
+// ========== ファイル名モーダル ==========
 let fnMode='';
 function openFilenameModal(mode){
   fnMode=mode;
@@ -654,14 +849,14 @@ function openFilenameModal(mode){
 }
 function closeFilenameModal(){document.getElementById('filename-modal').classList.remove('open');}
 
-// ===== HTML保存 =====
-function downloadHTML(filename) {
+// ========== HTML保存 ==========
+function downloadHTML(filename){
   const inputData=[];
   document.querySelectorAll('input:not([type=file])').forEach(el=>inputData.push({value:el.value,checked:el.checked,type:el.type}));
   const taData=[];
   document.querySelectorAll('textarea').forEach(el=>taData.push(el.value));
   const photoData=[];
-  document.querySelectorAll('.photo-thumb img').forEach(el=>photoData.push({src:el.src,base:el.dataset.base||el.src,shapes:el.dataset.shapes||'',scale:el.dataset.shapesScale||''}));
+  document.querySelectorAll('.photo-thumb img').forEach(el=>photoData.push({src:el.src,base:el.dataset.base||el.src,shapes:el.dataset.shapes||''}));
   const visibleIds=Array.from(document.querySelectorAll('.room-block')).map(b=>b.id);
   const parser=new DOMParser();
   const doc=parser.parseFromString(document.documentElement.outerHTML,'text/html');
@@ -670,7 +865,7 @@ function downloadHTML(filename) {
   const cT=doc.querySelectorAll('textarea');
   taData.forEach((v,i)=>{if(cT[i])cT[i].textContent=v;});
   const cP=doc.querySelectorAll('.photo-thumb img');
-  photoData.forEach((p,i)=>{if(!cP[i])return;cP[i].setAttribute('src',p.src);cP[i].setAttribute('data-base',p.base);if(p.shapes)cP[i].setAttribute('data-shapes',p.shapes);if(p.scale)cP[i].setAttribute('data-shapes-scale',p.scale);});
+  photoData.forEach((p,i)=>{if(!cP[i])return;cP[i].setAttribute('src',p.src);cP[i].setAttribute('data-base',p.base);if(p.shapes)cP[i].setAttribute('data-shapes',p.shapes);});
   doc.querySelectorAll('.room-block').forEach(b=>{if(!visibleIds.includes(b.id))b.remove();});
   const cContainer=doc.getElementById('rooms-container');
   const cRestoreBar=doc.getElementById('restore-bar');
@@ -683,7 +878,7 @@ function downloadHTML(filename) {
     });
   }
   const sc=doc.createElement('script');
-  sc.textContent=`function _restoreRoom(id){const wrap=document.getElementById('del-'+id);if(!wrap)return;const block=wrap.firstElementChild;if(!block)return;wrap.remove();const c=document.getElementById('rooms-container');if(id.startsWith('room-')){const n=parseInt(id.replace('room-',''));const all=Array.from(c.querySelectorAll('[id^=room-]'));const next=all.find(b=>parseInt(b.id.replace('room-',''))>n);next?c.insertBefore(block,next):c.appendChild(block);}else{c.appendChild(block);}document.getElementById('rb-'+id)?.remove();if(!document.getElementById('restore-btns').children.length)document.getElementById('restore-bar').style.display='none';}`;
+  sc.textContent=`function _restoreRoom(id){const wrap=document.getElementById('del-'+id);if(!wrap)return;const block=wrap.firstElementChild;if(!block)return;wrap.remove();const c=document.getElementById('rooms-container');if(id.startsWith('room-')){const n=parseInt(id.replace('room-',''));const all=Array.from(c.querySelectorAll('[id^=room-]'));const next=all.find(b=>parseInt(b.id.replace('room-',''))>n);next?c.insertBefore(block,next):c.appendChild(block);}else c.appendChild(block);document.getElementById('rb-'+id)?.remove();if(!document.getElementById('restore-btns').children.length)document.getElementById('restore-bar').style.display='none';}`;
   doc.body.appendChild(sc);
   const html='<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
   const blob=new Blob([html],{type:'text/html;charset=utf-8'});
@@ -695,8 +890,8 @@ function downloadHTML(filename) {
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},3000);
 }
 
-// ===== PDF保存 =====
-async function savePDF(filename) {
+// ========== PDF保存 ==========
+async function savePDF(filename){
   const btns=document.querySelectorAll('.btn-bar button');
   btns.forEach(b=>b.disabled=true);
   document.querySelectorAll('.no-print').forEach(el=>el.style.visibility='hidden');
@@ -709,10 +904,10 @@ async function savePDF(filename) {
   document.querySelectorAll('.room-left').forEach(el=>el.style.cssText='flex:1 !important;border-bottom:none !important;border-right:1px solid #ddd !important;');
   document.querySelectorAll('.room-right').forEach(el=>el.style.cssText='flex:1 !important;');
   const loadScript=(src)=>new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`)){res();return;}const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});
-  try {
+  try{
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
     await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    const {jsPDF}=window.jspdf;
+    const{jsPDF}=window.jspdf;
     const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
     const pW=pdf.internal.pageSize.getWidth(),pH=pdf.internal.pageSize.getHeight();
     const margin=10,printW=pW-margin*2;
@@ -729,9 +924,9 @@ async function savePDF(filename) {
     await addEl(document.querySelector('.header-info'));
     await addEl(document.querySelector('.section'));
     for(const block of document.querySelectorAll('.room-block'))await addEl(block);
-    await addEl(document.querySelector('.page>div:last-child'));
+    await addEl(document.querySelector('.page>div:last-of-type'));
     pdf.save((filename||'家屋調査報告書')+'.pdf');
-  } catch(e){alert('PDF生成に失敗しました。');}
+  }catch(e){alert('PDF生成に失敗しました。');}
   finally{
     page.setAttribute('style',origStyle);
     saved.forEach(({el,style})=>el.setAttribute('style',style));
