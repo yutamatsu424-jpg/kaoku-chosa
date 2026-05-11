@@ -917,6 +917,7 @@ function downloadHTML(filename) {
   const sc = doc.createElement('script');
   sc.textContent = `function _restoreRoom(id){const wrap=document.getElementById('del-'+id);if(!wrap)return;const block=wrap.firstElementChild;if(!block)return;wrap.remove();const c=document.getElementById('rooms-container');if(id.startsWith('room-')){const n=parseInt(id.replace('room-',''));const all=Array.from(c.querySelectorAll('[id^=room-]'));const next=all.find(b=>parseInt(b.id.replace('room-',''))>n);next?c.insertBefore(block,next):c.appendChild(block);}else c.appendChild(block);document.getElementById('rb-'+id)?.remove();if(!document.getElementById('restore-btns').children.length)document.getElementById('restore-bar').style.display='none';}`;
   doc.body.appendChild(sc);
+
   const html = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -927,18 +928,18 @@ function downloadHTML(filename) {
   setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 3000);
 }
 
-// ========== ライブラリ読み込み（window上のオブジェクト存在で判定） ==========
-function loadScript(src, windowKey) {
-  return new Promise((res, rej) => {
-    // すでにwindowにバインド済みなら即解決
-    if (windowKey && window[windowKey]) { res(); return; }
-    // scriptタグが存在しても window にない場合は強制再読み込み
-    const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) existing.remove();
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = res;
-    s.onerror = rej;
+// ========== ライブラリ管理 ==========
+const LIB_H2C   = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+const LIB_JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+
+function ensureLib(url, windowKey) {
+  return new Promise(function(resolve, reject) {
+    if (window[windowKey]) { resolve(); return; }
+    document.querySelectorAll('script[src="' + url + '"]').forEach(function(s){ s.remove(); });
+    var s = document.createElement('script');
+    s.src = url;
+    s.onload = function() { resolve(); };
+    s.onerror = function() { reject(new Error(windowKey + ' の読み込みに失敗しました')); };
     document.head.appendChild(s);
   });
 }
@@ -957,8 +958,8 @@ async function savePDF(filename) {
   document.querySelectorAll('.room-left').forEach(el => el.style.cssText = 'flex:1 !important;border-bottom:none !important;border-right:1px solid #ddd !important;');
   document.querySelectorAll('.room-right').forEach(el => el.style.cssText = 'flex:1 !important;');
   try {
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas');
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'jspdf');
+    await ensureLib(LIB_H2C,  'html2canvas');
+    await ensureLib(LIB_JSPDF, 'jspdf');
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pW = pdf.internal.pageSize.getWidth(), pH = pdf.internal.pageSize.getHeight();
