@@ -85,6 +85,32 @@ input[type=file] { display:none; }
 #anno-canvas-wrap { position:relative; margin:10px auto; display:inline-block; }
 #anno-canvas { display:block; max-width:96vw; border-radius:4px; border:2px solid #fff; cursor:crosshair; touch-action:none; }
 
+/* テキスト入力UI（anno-canvas-wrap内に重ねる） */
+#anno-text-ui {
+  display:none;
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  background:#fff;
+  border-radius:8px;
+  padding:16px;
+  width:260px;
+  max-width:90vw;
+  z-index:200;
+  box-shadow:0 4px 20px rgba(0,0,0,.6);
+}
+#anno-text-ui .tui-title { font-size:10pt; font-weight:bold; color:#111; margin-bottom:8px; }
+#anno-text-inp {
+  display:block; width:100%; box-sizing:border-box;
+  border:2px solid #2a7a4b; border-radius:4px;
+  padding:8px; font-size:14pt; color:#111;
+  margin-bottom:10px; outline:none;
+  font-family:"Hiragino Sans","Noto Sans CJK JP","Meiryo",sans-serif;
+}
+.tui-btns { display:flex; gap:8px; }
+#anno-text-cancel { flex:1; padding:10px; border-radius:4px; background:#888; color:#fff; font-size:11pt; cursor:pointer; text-align:center; user-select:none; border:none; font-family:inherit; }
+#anno-text-ok { flex:1; padding:10px; border-radius:4px; background:#2a7a4b; color:#fff; font-size:11pt; cursor:pointer; text-align:center; user-select:none; border:none; font-family:inherit; }
+
 /* トリミング */
 #trim-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:1100; flex-direction:column; align-items:center; justify-content:center; }
 #trim-modal.open { display:flex; }
@@ -192,13 +218,13 @@ input[type=file] { display:none; }
   </div>
   <div id="anno-canvas-wrap">
     <canvas id="anno-canvas"></canvas>
-    <div id="anno-text-ui" style="display:none;position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:8px;padding:16px;width:260px;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.5);">
-      <div style="font-size:10pt;font-weight:bold;color:#111;margin-bottom:8px;">テキストを入力</div>
-      <input id="anno-text-inp" type="text" placeholder="テキスト入力"
-        style="display:block;width:100%;box-sizing:border-box;border:2px solid #2a7a4b;border-radius:4px;padding:8px;font-size:14pt;color:#111;margin-bottom:10px;outline:none;">
-      <div style="display:flex;gap:8px;">
-        <div id="anno-cancel-btn" style="flex:1;padding:10px;border-radius:4px;background:#888;color:#fff;font-size:11pt;cursor:pointer;text-align:center;user-select:none;">キャンセル</div>
-        <div id="anno-ok-btn" style="flex:1;padding:10px;border-radius:4px;background:#2a7a4b;color:#fff;font-size:11pt;cursor:pointer;text-align:center;user-select:none;">✔ 完了</div>
+    <!-- テキスト入力UI：canvas-wrapの子でposition:absolute -->
+    <div id="anno-text-ui">
+      <div class="tui-title">テキストを入力</div>
+      <input id="anno-text-inp" type="text" placeholder="テキスト入力">
+      <div class="tui-btns">
+        <button id="anno-text-cancel">キャンセル</button>
+        <button id="anno-text-ok">✔ 完了</button>
       </div>
     </div>
   </div>
@@ -207,18 +233,7 @@ input[type=file] { display:none; }
   </div>
 </div>
 
-  <!-- テキスト入力UI：anno-modalの中に配置（position:fixedを使わない） -->
-  <div id="anno-text-ui" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; border-radius:8px; padding:20px; width:280px; max-width:90%; z-index:100; box-shadow:0 4px 20px rgba(0,0,0,.5);">
-    <div style="font-size:11pt;margin-bottom:8px;font-weight:bold;color:#111;">テキストを入力</div>
-    <textarea id="anno-text-input" rows="3" placeholder="ここに入力"
-      style="width:100%;border:2px solid #2a7a4b;border-radius:4px;padding:8px;font-size:13pt;font-family:inherit;outline:none;margin-bottom:10px;resize:none;display:block;box-sizing:border-box;"></textarea>
-    <div style="display:flex;gap:8px;">
-      <input type="button" id="anno-cancel-btn" value="キャンセル"
-        style="flex:1;padding:10px;border:none;border-radius:4px;background:#888;color:#fff;font-size:11pt;cursor:pointer;">
-      <input type="button" id="anno-ok-btn" value="✔ 完了"
-        style="flex:1;padding:10px;border:none;border-radius:4px;background:#2a7a4b;color:#fff;font-size:12pt;cursor:pointer;">
-    </div>
-  </div>
+<!-- トリミング -->
 <div id="trim-modal">
   <div class="trim-toolbar">
     <span style="color:#fff;font-size:10pt;font-weight:bold;">✂️ トリミング</span>
@@ -258,680 +273,718 @@ let customCount = 0;
 function deleteRoom(id, label) {
   const block = document.getElementById(id);
   if (!block) return;
-  deletedRooms[id] = { el:block, label };
+  deletedRooms[id] = { el: block, label };
   block.remove();
   document.getElementById('restore-bar').style.display = 'block';
   const btn = document.createElement('button');
-  btn.className='restore-btn'; btn.id='rb-'+id; btn.textContent='＋ '+label;
+  btn.className = 'restore-btn'; btn.id = 'rb-' + id; btn.textContent = '＋ ' + label;
   btn.onclick = () => restoreRoom(id);
   document.getElementById('restore-btns').appendChild(btn);
 }
 function restoreRoom(id) {
-  const d = deletedRooms[id]; if(!d) return;
+  const d = deletedRooms[id]; if (!d) return;
   delete deletedRooms[id];
   const c = document.getElementById('rooms-container');
-  if(id.startsWith('room-')){
-    const n=parseInt(id.replace('room-',''));
-    const all=Array.from(c.querySelectorAll('[id^=room-]'));
-    const next=all.find(b=>parseInt(b.id.replace('room-',''))>n);
-    next?c.insertBefore(d.el,next):c.appendChild(d.el);
+  if (id.startsWith('room-')) {
+    const n = parseInt(id.replace('room-', ''));
+    const all = Array.from(c.querySelectorAll('[id^=room-]'));
+    const next = all.find(b => parseInt(b.id.replace('room-', '')) > n);
+    next ? c.insertBefore(d.el, next) : c.appendChild(d.el);
   } else c.appendChild(d.el);
-  document.getElementById('rb-'+id)?.remove();
-  if(!document.getElementById('restore-btns').children.length)
-    document.getElementById('restore-bar').style.display='none';
+  document.getElementById('rb-' + id)?.remove();
+  if (!document.getElementById('restore-btns').children.length)
+    document.getElementById('restore-bar').style.display = 'none';
 }
 function addCustomRoom() {
   customCount++;
-  const id='custom-'+customCount;
-  const div=document.createElement('div');
-  div.className='room-block'; div.id=id;
-  div.innerHTML=`<div class="room-block-title"><input class="room-title-input" type="text" placeholder="タイトルを入力"><button class="room-del-btn no-print" onclick="deleteRoom('${id}','その他')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row"><input class="cell" type="text" placeholder="寸法・状況を入力" style="border-bottom:1px solid #888;"></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-${id}"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-${id}').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-${id}').click()">📷 カメラ</button></div><input type="file" id="fg-${id}" accept="image/*" multiple onchange="loadPhotos(this,'${id}')"><input type="file" id="fc-${id}" accept="image/*" capture="environment" onchange="loadPhotos(this,'${id}')"></div></div>`;
+  const id = 'custom-' + customCount;
+  const div = document.createElement('div');
+  div.className = 'room-block'; div.id = id;
+  div.innerHTML = `<div class="room-block-title"><input class="room-title-input" type="text" placeholder="タイトルを入力"><button class="room-del-btn no-print" onclick="deleteRoom('${id}','その他')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row"><input class="cell" type="text" placeholder="寸法・状況を入力" style="border-bottom:1px solid #888;"></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-${id}"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-${id}').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-${id}').click()">📷 カメラ</button></div><input type="file" id="fg-${id}" accept="image/*" multiple onchange="loadPhotos(this,'${id}')"><input type="file" id="fc-${id}" accept="image/*" capture="environment" onchange="loadPhotos(this,'${id}')"></div></div>`;
   document.getElementById('rooms-container').appendChild(div);
 }
 
 // ========== 写真 ==========
 function loadPhotos(input, roomId) {
-  const grid = document.getElementById('pg-'+roomId);
+  const grid = document.getElementById('pg-' + roomId);
   Array.from(input.files).forEach(file => {
     const reader = new FileReader();
     reader.onload = e => addPhotoThumb(grid, e.target.result);
     reader.readAsDataURL(file);
   });
-  input.value='';
+  input.value = '';
 }
 function addPhotoThumb(grid, src, shapesData) {
   const thumb = document.createElement('div');
   thumb.className = 'photo-thumb';
   const img = document.createElement('img');
-  img.src=src; img.alt='写真'; img.dataset.base=src;
-  if(shapesData) img.dataset.shapes=shapesData;
-  const delBtn=document.createElement('button');
-  delBtn.className='del-btn no-print'; delBtn.textContent='×';
-  delBtn.onclick=()=>thumb.remove();
-  const editBtn=document.createElement('button');
-  editBtn.className='edit-btn no-print'; editBtn.textContent='✏️ 編集';
-  editBtn.onclick=()=>openAnno(img);
-  const trimBtn=document.createElement('button');
-  trimBtn.className='trim-btn no-print'; trimBtn.textContent='✂️ トリミング';
-  trimBtn.onclick=()=>openTrim(img);
+  img.src = src; img.alt = '写真'; img.dataset.base = src;
+  if (shapesData) img.dataset.shapes = shapesData;
+  const delBtn = document.createElement('button');
+  delBtn.className = 'del-btn no-print'; delBtn.textContent = '×';
+  delBtn.onclick = () => thumb.remove();
+  const editBtn = document.createElement('button');
+  editBtn.className = 'edit-btn no-print'; editBtn.textContent = '✏️ 編集';
+  editBtn.onclick = () => openAnno(img);
+  const trimBtn = document.createElement('button');
+  trimBtn.className = 'trim-btn no-print'; trimBtn.textContent = '✂️ トリミング';
+  trimBtn.onclick = () => openTrim(img);
   thumb.appendChild(img); thumb.appendChild(delBtn);
   thumb.appendChild(editBtn); thumb.appendChild(trimBtn);
   grid.appendChild(thumb);
 }
 
-// ========== アノテーション（Canvas方式・完全版）==========
-let annoTool='select', annoColor='#ff3333';
-let annoTargetImg=null, annoCanvas=null, annoCtx=null;
-let annoBaseImage=null; // 元画像（書き込みなし）
-let annoShapes=[];      // 確定済み図形リスト
-let annoSelIdx=-1;
-// 操作状態
-let annoDown=false, annoRotating=false;
-let annoSx=0, annoSy=0, annoPts=[];
-let annoDragOff={x:0,y:0}, annoRotStart=0;
+// ========== アノテーション ==========
+// 状態変数（すべてモジュールスコープで一元管理）
+let annoTool = 'select';
+let annoColor = '#ff3333';
+let annoTargetImg = null;
+let annoCanvas = null;
+let annoCtx = null;
+let annoBaseImage = null;
+let annoShapes = [];
+let annoSelIdx = -1;
+let annoDown = false;
+let annoRotating = false;
+let annoSx = 0, annoSy = 0;
+let annoPts = [];
+let annoDragOff = { x: 0, y: 0 };
+let annoRotStart = 0;
+// テキスト入力中フラグ
+let annoTextActive = false;
+let annoTextPx = 0, annoTextPy = 0;
+
+// 椅子スライダー
+document.getElementById('chair-size-slider').addEventListener('input', function () {
+  document.getElementById('chair-size-val').textContent = this.value;
+  if (annoSelIdx >= 0 && annoShapes[annoSelIdx] && annoShapes[annoSelIdx].type === 'chair') {
+    annoShapes[annoSelIdx].size = parseInt(this.value);
+    redrawAnno();
+  }
+});
 
 function setAnnoTool(t) {
-  annoTool=t;
-  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tool-'+t)?.classList.add('active');
-  if(annoCanvas) annoCanvas.style.cursor=(t==='select'?'default':'crosshair');
+  annoTool = t;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('tool-' + t);
+  if (btn) btn.classList.add('active');
+  if (annoCanvas) annoCanvas.style.cursor = (t === 'select' ? 'default' : 'crosshair');
 }
-function setAnnoColor(c,el) {
-  annoColor=c;
-  document.querySelectorAll('.anno-color').forEach(e=>e.classList.remove('active-color'));
+
+function setAnnoColor(c, el) {
+  annoColor = c;
+  document.querySelectorAll('.anno-color').forEach(e => e.classList.remove('active-color'));
   el.classList.add('active-color');
-  if(annoSelIdx>=0){ annoShapes[annoSelIdx].color=c; redrawAnno(); }
-}
-
-function openAnno(imgEl) {
-  annoTargetImg=imgEl;
-  try{ annoShapes=imgEl.dataset.shapes?JSON.parse(imgEl.dataset.shapes):[]; }catch(e){ annoShapes=[]; }
-  annoSelIdx=-1; annoDown=false; annoRotating=false;
-
-  annoCanvas=document.getElementById('anno-canvas');
-  annoCtx=annoCanvas.getContext('2d');
-
-  const src=imgEl.dataset.base||imgEl.src;
-  const img=new Image();
-  img.onload=()=>{
-    annoBaseImage=img;
-    const maxW=Math.min(window.innerWidth*0.96, 900);
-    const maxH=window.innerHeight*0.70;
-    const sc=Math.min(maxW/img.width, maxH/img.height, 1);
-    annoCanvas.width=Math.round(img.width*sc);
-    annoCanvas.height=Math.round(img.height*sc);
-    redrawAnno();
-  };
-  img.src=src;
-
-  document.getElementById('anno-modal').classList.add('open');
-  setAnnoTool('select');
-}
-
-function redrawAnno() {
-  if(!annoCtx||!annoBaseImage) return;
-  annoCtx.clearRect(0,0,annoCanvas.width,annoCanvas.height);
-  annoCtx.drawImage(annoBaseImage,0,0,annoCanvas.width,annoCanvas.height);
-  annoShapes.forEach((s,i)=>drawAnnoShape(s,i===annoSelIdx));
-}
-
-function drawAnnoShape(s,sel) {
-  const ctx=annoCtx;
-  ctx.save();
-  ctx.strokeStyle=s.color; ctx.fillStyle=s.color;
-  ctx.lineWidth=sel?3:2; ctx.lineCap='round'; ctx.lineJoin='round';
-
-  if(s.type==='arrow'){
-    drawArrow(ctx,s.x1,s.y1,s.x2,s.y2,s.color);
-  } else if(s.type==='line'){
-    ctx.beginPath(); ctx.moveTo(s.x1,s.y1); ctx.lineTo(s.x2,s.y2); ctx.stroke();
-  } else if(s.type==='rect'){
-    ctx.translate(s.cx,s.cy); ctx.rotate(s.angle||0);
-    const hw=(s.x2-s.x1)/2, hh=(s.y2-s.y1)/2;
-    ctx.strokeRect(-hw,-hh,hw*2,hh*2);
-    if(sel){ drawHandle(ctx,0,0); drawRotHandleCanvas(ctx,s); }
-  } else if(s.type==='pen'){
-    ctx.beginPath();
-    s.pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
-    ctx.stroke();
-  } else if(s.type==='text'){
-    const fs=s.fontSize||24;
-    ctx.font=`bold ${fs}px "Hiragino Sans","Noto Sans CJK JP","Meiryo",sans-serif`;
-    ctx.fillStyle='rgba(0,0,0,0.5)';
-    const tw=ctx.measureText(s.text).width;
-    ctx.fillRect(s.x-2,s.y-fs,tw+4,fs+4);
-    ctx.fillStyle=s.color;
-    ctx.fillText(s.text,s.x,s.y);
-  } else if(s.type==='chair'){
-    ctx.translate(s.cx,s.cy); ctx.rotate(s.angle||0);
-    const sz=s.size||40;
-    drawChairShape(ctx,sz,s.color);
-    if(sel){ drawHandle(ctx,0,0); drawRotHandleCanvas(ctx,s,true); }
-  }
-  ctx.restore();
-
-  if(sel && (s.type==='arrow'||s.type==='line')){
-    drawHandle(ctx,s.x1,s.y1); drawHandle(ctx,s.x2,s.y2);
-  }
-}
-
-function drawArrow(ctx,x1,y1,x2,y2,color){
-  const hl=16,a=Math.atan2(y2-y1,x2-x1);
-  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x2,y2);
-  ctx.lineTo(x2-hl*Math.cos(a-Math.PI/6),y2-hl*Math.sin(a-Math.PI/6));
-  ctx.lineTo(x2-hl*Math.cos(a+Math.PI/6),y2-hl*Math.sin(a+Math.PI/6));
-  ctx.closePath(); ctx.fill();
-}
-function drawHandle(ctx,x,y){
-  ctx.save(); ctx.fillStyle='#fff'; ctx.strokeStyle='#333'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill(); ctx.stroke(); ctx.restore();
-}
-function drawRotHandleCanvas(ctx,s,local){
-  // 回転ハンドルを図形中心の上方に描画
-  const off=local?(s.size||40)*1.0:Math.max(Math.abs(s.y2-s.y1)/2+20,25);
-  ctx.save(); ctx.fillStyle='#4af'; ctx.strokeStyle='#fff'; ctx.lineWidth=1.5;
-  ctx.beginPath(); ctx.arc(0,-off,7,0,Math.PI*2); ctx.fill(); ctx.stroke();
-  ctx.strokeStyle='#aaf'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-off); ctx.stroke();
-  ctx.restore();
-}
-function drawChairShape(ctx,sz,color){
-  const sw=sz*0.8,sh=sz*0.7,lh=sz*0.7,bh=sz,bw=sz*0.68;
-  ctx.strokeStyle=color; ctx.lineWidth=2;
-  ctx.strokeRect(-sw,-sh,sw*2,sh*2);
-  [[-bw,-sh,-bw,-sh-bh],[bw,-sh,bw,-sh-bh],
-   [-bw,-sh-bh*0.3,bw,-sh-bh*0.3],[-bw,-sh-bh,bw,-sh-bh]]
-  .forEach(([x1,y1,x2,y2])=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();});
-  [[-sw,-sh],[sw,-sh],[-sw,sh],[sw,sh]]
-  .forEach(([lx,ly])=>{ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx,ly+lh);ctx.stroke();});
-  ctx.beginPath();ctx.moveTo(-sw,sh+lh*0.5);ctx.lineTo(sw,sh+lh*0.5);ctx.stroke();
-}
-
-function getCanvasPos(e){
-  const r=annoCanvas.getBoundingClientRect();
-  const src=e.touches?e.touches[0]:e;
-  return{x:(src.clientX-r.left)*(annoCanvas.width/r.width),
-         y:(src.clientY-r.top)*(annoCanvas.height/r.height)};
-}
-
-// 回転ハンドル位置（canvas座標）
-function getRotHandlePos(s){
-  if(s.type==='chair'){
-    const off=(s.size||40)*1.0;
-    const a=s.angle||0;
-    return{x:s.cx-off*Math.sin(a),y:s.cy-off*Math.cos(a)};
-  }
-  const cx=s.cx||(s.x1+s.x2)/2, cy=s.cy||(s.y1+s.y2)/2;
-  const off=Math.max(Math.abs(s.y2-s.y1)/2+20,25);
-  const a=s.angle||0;
-  return{x:cx-off*Math.sin(a),y:cy-off*Math.cos(a)};
-}
-function distC(x1,y1,x2,y2){return Math.sqrt((x2-x1)**2+(y2-y1)**2);}
-function hitAnno(s,x,y){
-  const D=16;
-  if(s.type==='arrow'||s.type==='line'){return distC((s.x1+s.x2)/2,(s.y1+s.y2)/2,x,y)<D*2;}
-  if(s.type==='rect'){const cx=s.cx||(s.x1+s.x2)/2,cy=s.cy||(s.y1+s.y2)/2;return distC(cx,cy,x,y)<Math.max(Math.abs(s.x2-s.x1),Math.abs(s.y2-s.y1))/2+D;}
-  if(s.type==='pen'){return s.pts.some(p=>distC(p.x,p.y,x,y)<D);}
-  if(s.type==='text'){return distC(s.x,s.y,x,y)<60;}
-  if(s.type==='chair'){return distC(s.cx,s.cy,x,y)<(s.size||40)*1.2;}
-  return false;
-}
-function moveAnno(s,dx,dy){
-  if(s.type==='text'){s.x+=dx;s.y+=dy;}
-  else if(s.type==='pen')s.pts.forEach(p=>{p.x+=dx;p.y+=dy;});
-  else if(s.type==='chair'){s.cx+=dx;s.cy+=dy;}
-  else if(s.type==='rect'){s.x1+=dx;s.y1+=dy;s.x2+=dx;s.y2+=dy;s.cx+=dx;s.cy+=dy;}
-  else{s.x1+=dx;s.y1+=dy;s.x2+=dx;s.y2+=dy;}
-}
-
-function setupAnnoEvents(){
-  var old = document.getElementById('anno-canvas');
-  var neo = old.cloneNode(true);
-  old.parentNode.replaceChild(neo, old);
-  annoCanvas = neo;
-  annoCtx = annoCanvas.getContext('2d');
-
-  // テキストUI要素
-  var textUI  = document.getElementById('anno-text-ui');
-  var textInp = document.getElementById('anno-text-inp');
-  var okBtn   = document.getElementById('anno-ok-btn');
-  var canBtn  = document.getElementById('anno-cancel-btn');
-  var textPx = 0, textPy = 0;
-
-  function showTextUI(x, y){
-    textPx = x; textPy = y;
-    textInp.value = '';
-    textUI.style.display = 'block';
-    textInp.focus();
-  }
-  function commitText(){
-    var txt = textInp.value.trim();
-    textUI.style.display = 'none';
-    textInp.value = '';
-    if(txt){
-      var fs = parseInt(document.getElementById('font-size').value)||24;
-      annoShapes.push({type:'text', x:textPx, y:textPy, text:txt, color:annoColor, fontSize:fs});
-      redrawAnno();
-    }
-  }
-  function cancelText(){
-    textUI.style.display = 'none';
-    textInp.value = '';
-  }
-
-  // ボタンはdivなのでmousedown/touchstartで処理
-  okBtn.addEventListener('mousedown',  function(e){ e.stopPropagation(); e.preventDefault(); commitText(); });
-  okBtn.addEventListener('touchstart', function(e){ e.stopPropagation(); e.preventDefault(); commitText(); }, {passive:false});
-  canBtn.addEventListener('mousedown',  function(e){ e.stopPropagation(); e.preventDefault(); cancelText(); });
-  canBtn.addEventListener('touchstart', function(e){ e.stopPropagation(); e.preventDefault(); cancelText(); }, {passive:false});
-
-  // Enterキー
-  textInp.addEventListener('keydown', function(e){
-    if(e.key === 'Enter'){ e.preventDefault(); commitText(); }
-    if(e.key === 'Escape'){ cancelText(); }
-  });
-
-  // textUI全体のイベントがcanvasに漏れないよう止める
-  textUI.addEventListener('mousedown',  function(e){ e.stopPropagation(); });
-  textUI.addEventListener('touchstart', function(e){ e.stopPropagation(); }, {passive:true});
-
-  function isTextUIVisible(){ return textUI.style.display !== 'none'; }
-
-  function syncChairSlider(){
-    if(annoSelIdx >= 0 && annoShapes[annoSelIdx] && annoShapes[annoSelIdx].type === 'chair'){
-      var sz = annoShapes[annoSelIdx].size || 18;
-      slider.value = sz;
-      sliderVal.textContent = sz;
-    }
-  }
-
-  function getPos(e){
-    var r = annoCanvas.getBoundingClientRect();
-    var src = e.touches ? e.touches[0] : e;
-    return {
-      x: (src.clientX - r.left) * (annoCanvas.width  / r.width),
-      y: (src.clientY - r.top)  * (annoCanvas.height / r.height)
-    };
-  }
-
-  annoCanvas.addEventListener('mousedown', function(e){
-    if(isTextUIVisible()){ commitText(); return; }
-    if(annoTool !== 'text') e.preventDefault();
-    var p = getPos(e);
-    if(annoTool === 'text'){ showTextUI(p.x, p.y); return; }
-    if(annoTool === 'chair'){
-      var sz = parseInt(document.getElementById('chair-size-slider').value)||18;
-      annoShapes.push({type:'chair',cx:p.x,cy:p.y,size:sz,angle:0,color:annoColor});
-      redrawAnno(); return;
-    }
-    if(annoTool === 'select'){
-      if(annoSelIdx >= 0){
-        var s = annoShapes[annoSelIdx];
-        if(s.type==='rect'||s.type==='chair'){
-          var rp = getRotHandlePos(s);
-          if(distC(rp.x,rp.y,p.x,p.y) < 20){ annoRotating=true; annoDown=false; var cx=s.cx||(s.x1+s.x2)/2,cy=s.cy||(s.y1+s.y2)/2; annoRotStart=Math.atan2(p.y-cy,p.x-cx)-(s.angle||0); return; }
-        }
-      }
-      annoRotating=false;
-      var prev=annoSelIdx; annoSelIdx=-1;
-      for(var i=annoShapes.length-1;i>=0;i--){ if(hitAnno(annoShapes[i],p.x,p.y)){annoSelIdx=i;break;} }
-      if(annoSelIdx>=0){annoDragOff={x:p.x,y:p.y};annoDown=true;}
-      if(prev!==annoSelIdx) redrawAnno();
-      return;
-    }
-    annoDown=true; annoSx=p.x; annoSy=p.y;
-    if(annoTool==='pen') annoPts=[{x:p.x,y:p.y}];
-  });
-
-  annoCanvas.addEventListener('touchstart', function(e){
-    if(isTextUIVisible()){ commitText(); return; }
-    e.preventDefault();
-    var p = getPos(e);
-    if(annoTool === 'text'){ showTextUI(p.x, p.y); return; }
-    if(annoTool === 'chair'){
-      var sz2 = parseInt(document.getElementById('chair-size-slider').value)||18;
-      annoShapes.push({type:'chair',cx:p.x,cy:p.y,size:sz2,angle:0,color:annoColor});
-      redrawAnno(); return;
-    }
-    if(annoTool === 'select'){
-      if(annoSelIdx >= 0){
-        var s = annoShapes[annoSelIdx];
-        if(s.type==='rect'||s.type==='chair'){
-          var rp = getRotHandlePos(s);
-          if(distC(rp.x,rp.y,p.x,p.y) < 20){ annoRotating=true; annoDown=false; var cx=s.cx||(s.x1+s.x2)/2,cy=s.cy||(s.y1+s.y2)/2; annoRotStart=Math.atan2(p.y-cy,p.x-cx)-(s.angle||0); return; }
-        }
-      }
-      annoRotating=false;
-      var prev=annoSelIdx; annoSelIdx=-1;
-      for(var i=annoShapes.length-1;i>=0;i--){ if(hitAnno(annoShapes[i],p.x,p.y)){annoSelIdx=i;break;} }
-      if(annoSelIdx>=0){annoDragOff={x:p.x,y:p.y};annoDown=true;}
-      if(prev !== annoSelIdx){
-        redrawAnno();
-        if(annoSelIdx >= 0 && annoShapes[annoSelIdx] && annoShapes[annoSelIdx].type === 'chair'){
-          slider.value = annoShapes[annoSelIdx].size || 18;
-          sliderVal.textContent = slider.value;
-        }
-      }
-      return;
-    }
-    annoDown=true; annoSx=p.x; annoSy=p.y;
-    if(annoTool==='pen') annoPts=[{x:p.x,y:p.y}];
-  }, {passive:false});
-
-  function onMove(e){
-    if(isTextUIVisible()) return;
-    e.preventDefault();
-    var p = getPos(e);
-    if(annoRotating && annoSelIdx>=0){
-      var s=annoShapes[annoSelIdx];
-      var cx=s.cx||(s.x1+s.x2)/2, cy=s.cy||(s.y1+s.y2)/2;
-      s.angle=Math.atan2(p.y-cy,p.x-cx)-annoRotStart;
-      if(s.type==='rect'){s.cx=cx;s.cy=cy;}
-      redrawAnno(); return;
-    }
-    if(!annoDown) return;
-    if(annoTool==='select'&&annoSelIdx>=0){
-      moveAnno(annoShapes[annoSelIdx],p.x-annoDragOff.x,p.y-annoDragOff.y);
-      annoDragOff={x:p.x,y:p.y}; redrawAnno(); return;
-    }
-    redrawAnno();
-    annoCtx.save();
-    annoCtx.strokeStyle=annoColor; annoCtx.fillStyle=annoColor; annoCtx.lineWidth=2; annoCtx.lineCap='round';
-    if(annoTool==='pen'){ annoPts.push({x:p.x,y:p.y}); annoCtx.beginPath(); annoPts.forEach(function(pt,i){i===0?annoCtx.moveTo(pt.x,pt.y):annoCtx.lineTo(pt.x,pt.y);}); annoCtx.stroke(); }
-    else if(annoTool==='arrow'){ drawArrow(annoCtx,annoSx,annoSy,p.x,p.y,annoColor); }
-    else if(annoTool==='line'){ annoCtx.beginPath();annoCtx.moveTo(annoSx,annoSy);annoCtx.lineTo(p.x,p.y);annoCtx.stroke(); }
-    else if(annoTool==='rect'){ annoCtx.strokeRect(annoSx,annoSy,p.x-annoSx,p.y-annoSy); }
-    annoCtx.restore();
-  }
-  annoCanvas.addEventListener('mousemove',  onMove);
-  annoCanvas.addEventListener('touchmove',  onMove, {passive:false});
-
-  function onUp(e){
-    if(isTextUIVisible()) return;
-    e.preventDefault();
-    annoRotating=false;
-    if(!annoDown) return;
-    annoDown=false;
-    var r=annoCanvas.getBoundingClientRect();
-    var src=e.changedTouches?e.changedTouches[0]:e;
-    var ex=(src.clientX-r.left)*(annoCanvas.width/r.width);
-    var ey=(src.clientY-r.top)*(annoCanvas.height/r.height);
-    if(annoTool==='arrow') annoShapes.push({type:'arrow',x1:annoSx,y1:annoSy,x2:ex,y2:ey,color:annoColor});
-    else if(annoTool==='line') annoShapes.push({type:'line',x1:annoSx,y1:annoSy,x2:ex,y2:ey,color:annoColor});
-    else if(annoTool==='rect'){ var cx=(annoSx+ex)/2,cy=(annoSy+ey)/2; annoShapes.push({type:'rect',x1:annoSx,y1:annoSy,x2:ex,y2:ey,cx:cx,cy:cy,angle:0,color:annoColor}); }
-    else if(annoTool==='pen') annoShapes.push({type:'pen',pts:annoPts.slice(),color:annoColor});
+  if (annoSelIdx >= 0 && annoShapes[annoSelIdx]) {
+    annoShapes[annoSelIdx].color = c;
     redrawAnno();
   }
-  annoCanvas.addEventListener('mouseup',  onUp);
-  annoCanvas.addEventListener('touchend', onUp, {passive:false});
 }
 
-function onAD(e){
-  // テキスト入力中はcanvasイベントを無視（blurで確定させる）
-  const inp = document.getElementById('anno-text-input');
-  if(inp && inp.style.display !== 'none') return;
-
-  if(annoTool !== 'text') e.preventDefault();
-  const p=getCanvasPos(e);
-
-  if(annoTool==='text'){
-    var inp2 = document.getElementById('anno-text-input');
-    if(inp2 && inp2.style.display !== 'none') return;
-    _initTextUI();
-    _textActive = true;
-    _textPx = p.x;
-    _textPy = p.y;
-    inp2.value = '';
-    inp2.style.display = 'block';
-    setTimeout(function(){ inp2.focus(); }, 30);
-    return;
-  }
-  if(annoTool==='chair'){
-    annoShapes.push({type:'chair',cx:p.x,cy:p.y,size:40,angle:0,color:annoColor});
-    redrawAnno(); return;
-  }
-  if(annoTool==='select'){
-    // 回転ハンドルチェック
-    if(annoSelIdx>=0){
-      const s=annoShapes[annoSelIdx];
-      if(s.type==='rect'||s.type==='chair'){
-        const rp=getRotHandlePos(s);
-        if(distC(rp.x,rp.y,p.x,p.y)<20){
-          annoRotating=true; annoDown=false;
-          const cx=s.cx||(s.x1+s.x2)/2, cy=s.cy||(s.y1+s.y2)/2;
-          annoRotStart=Math.atan2(p.y-cy,p.x-cx)-(s.angle||0);
-          return;
-        }
-      }
-    }
-    annoRotating=false;
-    const prev=annoSelIdx; annoSelIdx=-1;
-    for(let i=annoShapes.length-1;i>=0;i--){if(hitAnno(annoShapes[i],p.x,p.y)){annoSelIdx=i;break;}}
-    if(annoSelIdx>=0){annoDragOff={x:p.x,y:p.y};annoDown=true;}
-    if(prev!==annoSelIdx)redrawAnno();
-    return;
-  }
-  annoDown=true; annoSx=p.x; annoSy=p.y;
-  if(annoTool==='pen')annoPts=[{x:p.x,y:p.y}];
+function undoAnno() {
+  if (annoShapes.length) { annoShapes.pop(); annoSelIdx = -1; redrawAnno(); }
 }
 
-function onAM(e){
-  const inp = document.getElementById('anno-text-input');
-  if(inp && inp.style.display !== 'none') return;
-  e.preventDefault();
-  const p=getCanvasPos(e);
-  if(annoRotating&&annoSelIdx>=0){
-    const s=annoShapes[annoSelIdx];
-    const cx=s.cx||(s.x1+s.x2)/2, cy=s.cy||(s.y1+s.y2)/2;
-    s.angle=Math.atan2(p.y-cy,p.x-cx)-annoRotStart;
-    if(s.type==='rect'){s.cx=cx;s.cy=cy;}
-    redrawAnno(); return;
-  }
-  if(!annoDown)return;
-  if(annoTool==='select'&&annoSelIdx>=0){
-    moveAnno(annoShapes[annoSelIdx],p.x-annoDragOff.x,p.y-annoDragOff.y);
-    annoDragOff={x:p.x,y:p.y}; redrawAnno(); return;
-  }
-  // プレビュー描画
+function saveAnno() {
+  hideTextUI();
+  annoSelIdx = -1;
   redrawAnno();
-  annoCtx.save();
-  annoCtx.strokeStyle=annoColor; annoCtx.fillStyle=annoColor;
-  annoCtx.lineWidth=2; annoCtx.lineCap='round';
-  if(annoTool==='pen'){
-    annoPts.push({x:p.x,y:p.y});
-    annoCtx.beginPath();
-    annoPts.forEach((pt,i)=>i===0?annoCtx.moveTo(pt.x,pt.y):annoCtx.lineTo(pt.x,pt.y));
-    annoCtx.stroke();
-  } else if(annoTool==='arrow'){
-    drawArrow(annoCtx,annoSx,annoSy,p.x,p.y,annoColor);
-  } else if(annoTool==='line'){
-    annoCtx.beginPath();annoCtx.moveTo(annoSx,annoSy);annoCtx.lineTo(p.x,p.y);annoCtx.stroke();
-  } else if(annoTool==='rect'){
-    annoCtx.strokeRect(annoSx,annoSy,p.x-annoSx,p.y-annoSy);
-  }
-  annoCtx.restore();
-}
-
-function onAU(e){
-  const inp = document.getElementById('anno-text-input');
-  if(inp && inp.style.display !== 'none') return;
-  e.preventDefault();
-  annoRotating=false;
-  if(!annoDown)return;
-  annoDown=false;
-  const r=annoCanvas.getBoundingClientRect();
-  const src=e.changedTouches?e.changedTouches[0]:e;
-  const ex=(src.clientX-r.left)*(annoCanvas.width/r.width);
-  const ey=(src.clientY-r.top)*(annoCanvas.height/r.height);
-  if(annoTool==='arrow')annoShapes.push({type:'arrow',x1:annoSx,y1:annoSy,x2:ex,y2:ey,color:annoColor});
-  else if(annoTool==='line')annoShapes.push({type:'line',x1:annoSx,y1:annoSy,x2:ex,y2:ey,color:annoColor});
-  else if(annoTool==='rect'){
-    const cx=(annoSx+ex)/2,cy=(annoSy+ey)/2;
-    annoShapes.push({type:'rect',x1:annoSx,y1:annoSy,x2:ex,y2:ey,cx,cy,angle:0,color:annoColor});
-  }
-  else if(annoTool==='pen')annoShapes.push({type:'pen',pts:[...annoPts],color:annoColor});
-  redrawAnno();
-}
-
-function undoAnno(){if(annoShapes.length){annoShapes.pop();annoSelIdx=-1;redrawAnno();}}
-
-function saveAnno(){
-  annoSelIdx=-1; redrawAnno();
-  annoTargetImg.src=annoCanvas.toDataURL('image/png');
-  annoTargetImg.dataset.shapes=JSON.stringify(annoShapes);
+  annoTargetImg.src = annoCanvas.toDataURL('image/png');
+  annoTargetImg.dataset.shapes = JSON.stringify(annoShapes);
   closeAnno();
 }
-function closeAnno(){document.getElementById('anno-modal').classList.remove('open');}
 
-function openAnno(imgEl){
-  annoTargetImg=imgEl;
-  try{annoShapes=imgEl.dataset.shapes?JSON.parse(imgEl.dataset.shapes):[];}catch(e){annoShapes=[];}
-  annoSelIdx=-1; annoDown=false; annoRotating=false;
+function closeAnno() {
+  hideTextUI();
+  document.getElementById('anno-modal').classList.remove('open');
+}
 
-  // 先にcanvasを取得してからイベント登録
-  annoCanvas=document.getElementById('anno-canvas');
-  annoCtx=annoCanvas.getContext('2d');
+// --- テキストUI ---
+function showTextUI(x, y) {
+  annoTextActive = true;
+  annoTextPx = x; annoTextPy = y;
+  const ui = document.getElementById('anno-text-ui');
+  const inp = document.getElementById('anno-text-inp');
+  inp.value = '';
+  ui.style.display = 'block';
+  setTimeout(() => inp.focus(), 50);
+}
+
+function hideTextUI() {
+  annoTextActive = false;
+  document.getElementById('anno-text-ui').style.display = 'none';
+  document.getElementById('anno-text-inp').value = '';
+}
+
+function commitText() {
+  const txt = document.getElementById('anno-text-inp').value.trim();
+  hideTextUI();
+  if (txt) {
+    const fs = parseInt(document.getElementById('font-size').value) || 24;
+    annoShapes.push({ type: 'text', x: annoTextPx, y: annoTextPy + fs, text: txt, color: annoColor, fontSize: fs });
+    redrawAnno();
+  }
+}
+
+// テキストUIのボタンイベント（一度だけ登録）
+document.getElementById('anno-text-ok').addEventListener('click', function (e) {
+  e.stopPropagation(); commitText();
+});
+document.getElementById('anno-text-cancel').addEventListener('click', function (e) {
+  e.stopPropagation(); hideTextUI();
+});
+document.getElementById('anno-text-inp').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') { e.preventDefault(); commitText(); }
+  if (e.key === 'Escape') { hideTextUI(); }
+});
+// テキストUIのタッチ・クリックがcanvasに伝わらないよう止める
+document.getElementById('anno-text-ui').addEventListener('mousedown', e => e.stopPropagation());
+document.getElementById('anno-text-ui').addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+
+// --- 描画 ---
+function redrawAnno() {
+  if (!annoCtx || !annoBaseImage) return;
+  annoCtx.clearRect(0, 0, annoCanvas.width, annoCanvas.height);
+  annoCtx.drawImage(annoBaseImage, 0, 0, annoCanvas.width, annoCanvas.height);
+  annoShapes.forEach((s, i) => drawAnnoShape(s, i === annoSelIdx));
+}
+
+function drawAnnoShape(s, sel) {
+  const ctx = annoCtx;
+  ctx.save();
+  ctx.strokeStyle = s.color; ctx.fillStyle = s.color;
+  ctx.lineWidth = sel ? 3 : 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  if (s.type === 'arrow') {
+    drawArrow(ctx, s.x1, s.y1, s.x2, s.y2, s.color);
+    if (sel) { drawHandle(ctx, s.x1, s.y1); drawHandle(ctx, s.x2, s.y2); }
+  } else if (s.type === 'line') {
+    ctx.beginPath(); ctx.moveTo(s.x1, s.y1); ctx.lineTo(s.x2, s.y2); ctx.stroke();
+    if (sel) { drawHandle(ctx, s.x1, s.y1); drawHandle(ctx, s.x2, s.y2); }
+  } else if (s.type === 'rect') {
+    ctx.translate(s.cx, s.cy); ctx.rotate(s.angle || 0);
+    const hw = (s.x2 - s.x1) / 2, hh = (s.y2 - s.y1) / 2;
+    ctx.strokeRect(-hw, -hh, hw * 2, hh * 2);
+    if (sel) { drawHandle(ctx, 0, 0); drawRotHandle(ctx, Math.max(Math.abs(hh) + 20, 25)); }
+  } else if (s.type === 'pen') {
+    ctx.beginPath();
+    s.pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.stroke();
+  } else if (s.type === 'text') {
+    const fs = s.fontSize || 24;
+    ctx.font = `bold ${fs}px "Hiragino Sans","Noto Sans CJK JP","Meiryo",sans-serif`;
+    const tw = ctx.measureText(s.text).width;
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(s.x - 2, s.y - fs, tw + 4, fs + 4);
+    ctx.fillStyle = s.color;
+    ctx.fillText(s.text, s.x, s.y);
+  } else if (s.type === 'chair') {
+    ctx.translate(s.cx, s.cy); ctx.rotate(s.angle || 0);
+    const sz = s.size || 18;
+    drawChairShape(ctx, sz, s.color);
+    if (sel) { drawHandle(ctx, 0, 0); drawRotHandle(ctx, sz * 1.2); }
+  }
+  ctx.restore();
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color) {
+  const hl = 16, a = Math.atan2(y2 - y1, x2 - x1);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - hl * Math.cos(a - Math.PI / 6), y2 - hl * Math.sin(a - Math.PI / 6));
+  ctx.lineTo(x2 - hl * Math.cos(a + Math.PI / 6), y2 - hl * Math.sin(a + Math.PI / 6));
+  ctx.closePath(); ctx.fill();
+}
+
+function drawHandle(ctx, x, y) {
+  ctx.save(); ctx.fillStyle = '#fff'; ctx.strokeStyle = '#333'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
+}
+
+function drawRotHandle(ctx, off) {
+  // 上方向に回転ハンドル（ローカル座標で呼ぶ）
+  ctx.save();
+  ctx.fillStyle = '#4af'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(0, -off, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#aaf'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -off); ctx.stroke();
+  ctx.restore();
+}
+
+function drawChairShape(ctx, sz, color) {
+  const sw = sz * 0.8, sh = sz * 0.7, lh = sz * 0.7, bh = sz, bw = sz * 0.68;
+  ctx.strokeStyle = color; ctx.lineWidth = 2;
+  ctx.strokeRect(-sw, -sh, sw * 2, sh * 2);
+  [[-bw, -sh, -bw, -sh - bh], [bw, -sh, bw, -sh - bh],
+   [-bw, -sh - bh * 0.3, bw, -sh - bh * 0.3], [-bw, -sh - bh, bw, -sh - bh]]
+    .forEach(([x1, y1, x2, y2]) => { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); });
+  [[-sw, -sh], [sw, -sh], [-sw, sh], [sw, sh]]
+    .forEach(([lx, ly]) => { ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx, ly + lh); ctx.stroke(); });
+  ctx.beginPath(); ctx.moveTo(-sw, sh + lh * 0.5); ctx.lineTo(sw, sh + lh * 0.5); ctx.stroke();
+}
+
+// --- 座標変換 ---
+function getCanvasPos(e) {
+  const r = annoCanvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return {
+    x: (src.clientX - r.left) * (annoCanvas.width / r.width),
+    y: (src.clientY - r.top) * (annoCanvas.height / r.height)
+  };
+}
+
+// --- 回転ハンドル位置（ワールド座標） ---
+function getRotHandleWorldPos(s) {
+  const angle = s.angle || 0;
+  if (s.type === 'chair') {
+    const off = (s.size || 18) * 1.2;
+    return { x: s.cx - off * Math.sin(angle), y: s.cy - off * Math.cos(angle) };
+  }
+  // rect
+  const cx = s.cx || (s.x1 + s.x2) / 2;
+  const cy = s.cy || (s.y1 + s.y2) / 2;
+  const off = Math.max(Math.abs(s.y2 - s.y1) / 2 + 20, 25);
+  return { x: cx - off * Math.sin(angle), y: cy - off * Math.cos(angle) };
+}
+
+function dist(x1, y1, x2, y2) { return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2); }
+
+function hitAnno(s, x, y) {
+  const D = 16;
+  if (s.type === 'arrow' || s.type === 'line')
+    return dist((s.x1 + s.x2) / 2, (s.y1 + s.y2) / 2, x, y) < D * 2;
+  if (s.type === 'rect') {
+    const cx = s.cx || (s.x1 + s.x2) / 2, cy = s.cy || (s.y1 + s.y2) / 2;
+    return dist(cx, cy, x, y) < Math.max(Math.abs(s.x2 - s.x1), Math.abs(s.y2 - s.y1)) / 2 + D;
+  }
+  if (s.type === 'pen') return s.pts.some(p => dist(p.x, p.y, x, y) < D);
+  if (s.type === 'text') return dist(s.x, s.y, x, y) < 60;
+  if (s.type === 'chair') return dist(s.cx, s.cy, x, y) < (s.size || 18) * 1.5;
+  return false;
+}
+
+function moveAnnoShape(s, dx, dy) {
+  if (s.type === 'text') { s.x += dx; s.y += dy; }
+  else if (s.type === 'pen') s.pts.forEach(p => { p.x += dx; p.y += dy; });
+  else if (s.type === 'chair') { s.cx += dx; s.cy += dy; }
+  else if (s.type === 'rect') { s.x1 += dx; s.y1 += dy; s.x2 += dx; s.y2 += dy; s.cx += dx; s.cy += dy; }
+  else { s.x1 += dx; s.y1 += dy; s.x2 += dx; s.y2 += dy; }
+}
+
+// --- openAnno ---
+function openAnno(imgEl) {
+  annoTargetImg = imgEl;
+  try { annoShapes = imgEl.dataset.shapes ? JSON.parse(imgEl.dataset.shapes) : []; } catch (e) { annoShapes = []; }
+  annoSelIdx = -1; annoDown = false; annoRotating = false;
+  hideTextUI();
+
+  annoCanvas = document.getElementById('anno-canvas');
+  annoCtx = annoCanvas.getContext('2d');
 
   document.getElementById('anno-modal').classList.add('open');
   setAnnoTool('select');
-  setupAnnoEvents();
 
-  const src=imgEl.dataset.base||imgEl.src;
-  const img=new Image();
-  img.onload=()=>{
-    annoBaseImage=img;
-    const maxW=Math.min(window.innerWidth*0.96,900);
-    const maxH=window.innerHeight*0.70;
-    const sc=Math.min(maxW/img.width,maxH/img.height,1);
-    annoCanvas.width=Math.round(img.width*sc);
-    annoCanvas.height=Math.round(img.height*sc);
-    annoCtx=annoCanvas.getContext('2d');
+  const src = imgEl.dataset.base || imgEl.src;
+  const img = new Image();
+  img.onload = () => {
+    annoBaseImage = img;
+    const maxW = Math.min(window.innerWidth * 0.96, 900);
+    const maxH = window.innerHeight * 0.70;
+    const sc = Math.min(maxW / img.width, maxH / img.height, 1);
+    annoCanvas.width = Math.round(img.width * sc);
+    annoCanvas.height = Math.round(img.height * sc);
+    annoCtx = annoCanvas.getContext('2d');
     redrawAnno();
   };
-  img.src=src;
+  img.src = src;
 }
+
+// --- canvasイベント（一度だけ登録） ---
+(function setupAnnoEvents() {
+  const canvas = document.getElementById('anno-canvas');
+
+  function onDown(e) {
+    // テキスト入力中はcanvasのdown無視（UIのstopPropagationで通常は来ないが念のため）
+    if (annoTextActive) return;
+    if (annoTool !== 'text') e.preventDefault();
+    const p = getCanvasPos(e);
+
+    if (annoTool === 'text') {
+      showTextUI(p.x, p.y);
+      return;
+    }
+
+    if (annoTool === 'chair') {
+      const sz = parseInt(document.getElementById('chair-size-slider').value) || 18;
+      annoShapes.push({ type: 'chair', cx: p.x, cy: p.y, size: sz, angle: 0, color: annoColor });
+      redrawAnno();
+      return;
+    }
+
+    if (annoTool === 'select') {
+      // 回転ハンドルチェック
+      if (annoSelIdx >= 0 && annoShapes[annoSelIdx]) {
+        const s = annoShapes[annoSelIdx];
+        if (s.type === 'rect' || s.type === 'chair') {
+          const rp = getRotHandleWorldPos(s);
+          if (dist(rp.x, rp.y, p.x, p.y) < 20) {
+            annoRotating = true;
+            annoDown = false;
+            const cx = s.cx || (s.x1 + s.x2) / 2;
+            const cy = s.cy || (s.y1 + s.y2) / 2;
+            annoRotStart = Math.atan2(p.y - cy, p.x - cx) - (s.angle || 0);
+            return;
+          }
+        }
+      }
+      annoRotating = false;
+      const prev = annoSelIdx; annoSelIdx = -1;
+      for (let i = annoShapes.length - 1; i >= 0; i--) {
+        if (hitAnno(annoShapes[i], p.x, p.y)) { annoSelIdx = i; break; }
+      }
+      if (annoSelIdx >= 0) { annoDragOff = { x: p.x, y: p.y }; annoDown = true; }
+      if (prev !== annoSelIdx) {
+        redrawAnno();
+        if (annoSelIdx >= 0 && annoShapes[annoSelIdx] && annoShapes[annoSelIdx].type === 'chair') {
+          const slider = document.getElementById('chair-size-slider');
+          slider.value = annoShapes[annoSelIdx].size || 18;
+          document.getElementById('chair-size-val').textContent = slider.value;
+        }
+      }
+      return;
+    }
+
+    annoDown = true; annoSx = p.x; annoSy = p.y;
+    if (annoTool === 'pen') annoPts = [{ x: p.x, y: p.y }];
+  }
+
+  function onMove(e) {
+    if (annoTextActive) return;
+    e.preventDefault();
+    const p = getCanvasPos(e);
+
+    if (annoRotating && annoSelIdx >= 0 && annoShapes[annoSelIdx]) {
+      const s = annoShapes[annoSelIdx];
+      const cx = s.cx || (s.x1 + s.x2) / 2;
+      const cy = s.cy || (s.y1 + s.y2) / 2;
+      s.angle = Math.atan2(p.y - cy, p.x - cx) - annoRotStart;
+      if (s.type === 'rect') { s.cx = cx; s.cy = cy; }
+      redrawAnno();
+      return;
+    }
+
+    if (!annoDown) return;
+
+    if (annoTool === 'select' && annoSelIdx >= 0) {
+      moveAnnoShape(annoShapes[annoSelIdx], p.x - annoDragOff.x, p.y - annoDragOff.y);
+      annoDragOff = { x: p.x, y: p.y };
+      redrawAnno();
+      return;
+    }
+
+    // プレビュー
+    redrawAnno();
+    annoCtx.save();
+    annoCtx.strokeStyle = annoColor; annoCtx.fillStyle = annoColor;
+    annoCtx.lineWidth = 2; annoCtx.lineCap = 'round';
+    if (annoTool === 'pen') {
+      annoPts.push({ x: p.x, y: p.y });
+      annoCtx.beginPath();
+      annoPts.forEach((pt, i) => i === 0 ? annoCtx.moveTo(pt.x, pt.y) : annoCtx.lineTo(pt.x, pt.y));
+      annoCtx.stroke();
+    } else if (annoTool === 'arrow') {
+      drawArrow(annoCtx, annoSx, annoSy, p.x, p.y, annoColor);
+    } else if (annoTool === 'line') {
+      annoCtx.beginPath(); annoCtx.moveTo(annoSx, annoSy); annoCtx.lineTo(p.x, p.y); annoCtx.stroke();
+    } else if (annoTool === 'rect') {
+      annoCtx.strokeRect(annoSx, annoSy, p.x - annoSx, p.y - annoSy);
+    }
+    annoCtx.restore();
+  }
+
+  function onUp(e) {
+    if (annoTextActive) return;
+    annoRotating = false;
+    if (!annoDown) return;
+    annoDown = false;
+
+    const r = annoCanvas.getBoundingClientRect();
+    const src = e.changedTouches ? e.changedTouches[0] : e;
+    const ex = (src.clientX - r.left) * (annoCanvas.width / r.width);
+    const ey = (src.clientY - r.top) * (annoCanvas.height / r.height);
+
+    if (annoTool === 'arrow')
+      annoShapes.push({ type: 'arrow', x1: annoSx, y1: annoSy, x2: ex, y2: ey, color: annoColor });
+    else if (annoTool === 'line')
+      annoShapes.push({ type: 'line', x1: annoSx, y1: annoSy, x2: ex, y2: ey, color: annoColor });
+    else if (annoTool === 'rect') {
+      const cx = (annoSx + ex) / 2, cy = (annoSy + ey) / 2;
+      annoShapes.push({ type: 'rect', x1: annoSx, y1: annoSy, x2: ex, y2: ey, cx, cy, angle: 0, color: annoColor });
+    } else if (annoTool === 'pen') {
+      annoShapes.push({ type: 'pen', pts: [...annoPts], color: annoColor });
+    }
+    redrawAnno();
+  }
+
+  canvas.addEventListener('mousedown', onDown);
+  canvas.addEventListener('mousemove', onMove);
+  canvas.addEventListener('mouseup', onUp);
+  canvas.addEventListener('touchstart', onDown, { passive: false });
+  canvas.addEventListener('touchmove', onMove, { passive: false });
+  canvas.addEventListener('touchend', onUp, { passive: false });
+})();
 
 // ========== トリミング ==========
-let trimCanvas,trimCtx,trimSrcImg,trimThumbImg;
-let trimCrop={l:0,t:0,r:0,b:0},trimDragHandle=null,trimDragStart=null;
-const HS=16;
-function openTrim(imgEl){
-  trimThumbImg=imgEl; trimCanvas=document.getElementById('trim-canvas'); trimCtx=trimCanvas.getContext('2d');
-  const img=new Image();
-  img.onload=()=>{trimSrcImg=img;const mw=window.innerWidth*.92,mh=window.innerHeight*.63;const sc=Math.min(mw/img.width,mh/img.height,1);trimCanvas.width=Math.round(img.width*sc);trimCanvas.height=Math.round(img.height*sc);trimCrop={l:0,t:0,r:0,b:0};drawTrim();};
-  img.src=imgEl.dataset.base||imgEl.src;
+let trimCanvas = document.getElementById('trim-canvas');
+let trimCtx = trimCanvas.getContext('2d');
+let trimSrcImg = null, trimThumbImg = null;
+let trimCrop = { l: 0, t: 0, r: 0, b: 0 };
+let trimDragHandle = null, trimDragStart = null;
+const HS = 16;
+
+function openTrim(imgEl) {
+  trimThumbImg = imgEl;
+  const img = new Image();
+  img.onload = () => {
+    trimSrcImg = img;
+    const mw = window.innerWidth * 0.92, mh = window.innerHeight * 0.63;
+    const sc = Math.min(mw / img.width, mh / img.height, 1);
+    trimCanvas.width = Math.round(img.width * sc);
+    trimCanvas.height = Math.round(img.height * sc);
+    trimCrop = { l: 0, t: 0, r: 0, b: 0 };
+    drawTrim();
+  };
+  img.src = imgEl.dataset.base || imgEl.src;
   document.getElementById('trim-modal').classList.add('open');
 }
-function drawTrim(){const W=trimCanvas.width,H=trimCanvas.height,{l,t,r,b}=trimCrop;trimCtx.clearRect(0,0,W,H);trimCtx.drawImage(trimSrcImg,0,0,W,H);trimCtx.fillStyle='rgba(0,0,0,0.55)';if(l>0)trimCtx.fillRect(0,0,l,H);if(r>0)trimCtx.fillRect(W-r,0,r,H);if(t>0)trimCtx.fillRect(l,0,W-l-r,t);if(b>0)trimCtx.fillRect(l,H-b,W-l-r,b);trimCtx.strokeStyle='#fff';trimCtx.lineWidth=2;trimCtx.strokeRect(l,t,W-l-r,H-t-b);getHandles(l,t,W-l-r,H-t-b).forEach(h=>{trimCtx.fillStyle='#fff';trimCtx.fillRect(h.x-HS/2,h.y-HS/2,HS,HS);});}
-function getHandles(x,y,w,h){const mx=x+w/2,my=y+h/2,r=x+w,b=y+h;return[{id:'tl',x,y},{id:'tc',x:mx,y},{id:'tr',x:r,y},{id:'ml',x,y:my},{id:'mr',x:r,y:my},{id:'bl',x,y:b},{id:'bc',x:mx,y:b},{id:'br',x:r,y:b}];}
-function getTrimPos(e){const r=trimCanvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:src.clientX-r.left,y:src.clientY-r.top};}
-function hitHandle(p){const W=trimCanvas.width,H=trimCanvas.height,{l,t,r,b}=trimCrop;return getHandles(l,t,W-l-r,H-t-b).find(h=>Math.abs(h.x-p.x)<HS&&Math.abs(h.y-p.y)<HS)||null;}
-trimCanvas=document.getElementById('trim-canvas');
-['mousedown','touchstart'].forEach(ev=>trimCanvas.addEventListener(ev,e=>{if(ev==='touchstart')e.preventDefault();const p=getTrimPos(e);trimDragHandle=hitHandle(p);if(trimDragHandle)trimDragStart=p;},{passive:false}));
-['mousemove','touchmove'].forEach(ev=>trimCanvas.addEventListener(ev,e=>{if(ev==='touchmove')e.preventDefault();const p=getTrimPos(e);if(!trimDragHandle||!trimDragStart)return;const W=trimCanvas.width,H=trimCanvas.height,dx=p.x-trimDragStart.x,dy=p.y-trimDragStart.y,id=trimDragHandle.id,MIN=20,nc={...trimCrop};if(id.includes('l'))nc.l=Math.max(0,Math.min(trimCrop.l+dx,W-trimCrop.r-MIN));if(id.includes('r'))nc.r=Math.max(0,Math.min(trimCrop.r-dx,W-trimCrop.l-MIN));if(id.includes('t'))nc.t=Math.max(0,Math.min(trimCrop.t+dy,H-trimCrop.b-MIN));if(id.includes('b'))nc.b=Math.max(0,Math.min(trimCrop.b-dy,H-trimCrop.t-MIN));trimCrop=nc;trimDragStart=p;drawTrim();},{passive:false}));
-['mouseup','touchend'].forEach(ev=>trimCanvas.addEventListener(ev,()=>{trimDragHandle=null;trimDragStart=null;}));
-function resetTrim(){trimCrop={l:0,t:0,r:0,b:0};drawTrim();}
-function saveTrim(){const W=trimCanvas.width,H=trimCanvas.height,{l,t,r,b}=trimCrop,cw=W-l-r,ch=H-t-b;if(cw<10||ch<10){alert('範囲が小さすぎます');return;}const out=document.createElement('canvas');out.width=cw;out.height=ch;out.getContext('2d').drawImage(trimSrcImg,(l/W)*trimSrcImg.width,(t/H)*trimSrcImg.height,(cw/W)*trimSrcImg.width,(ch/H)*trimSrcImg.height,0,0,cw,ch);const ns=out.toDataURL('image/png');trimThumbImg.src=ns;trimThumbImg.dataset.base=ns;delete trimThumbImg.dataset.shapes;closeTrim();}
-function closeTrim(){document.getElementById('trim-modal').classList.remove('open');}
+
+function drawTrim() {
+  const W = trimCanvas.width, H = trimCanvas.height, { l, t, r, b } = trimCrop;
+  trimCtx.clearRect(0, 0, W, H);
+  trimCtx.drawImage(trimSrcImg, 0, 0, W, H);
+  trimCtx.fillStyle = 'rgba(0,0,0,0.55)';
+  if (l > 0) trimCtx.fillRect(0, 0, l, H);
+  if (r > 0) trimCtx.fillRect(W - r, 0, r, H);
+  if (t > 0) trimCtx.fillRect(l, 0, W - l - r, t);
+  if (b > 0) trimCtx.fillRect(l, H - b, W - l - r, b);
+  trimCtx.strokeStyle = '#fff'; trimCtx.lineWidth = 2;
+  trimCtx.strokeRect(l, t, W - l - r, H - t - b);
+  getHandles(l, t, W - l - r, H - t - b).forEach(h => {
+    trimCtx.fillStyle = '#fff'; trimCtx.fillRect(h.x - HS / 2, h.y - HS / 2, HS, HS);
+  });
+}
+
+function getHandles(x, y, w, h) {
+  const mx = x + w / 2, my = y + h / 2, rx = x + w, by = y + h;
+  return [
+    { id: 'tl', x, y }, { id: 'tc', x: mx, y }, { id: 'tr', x: rx, y },
+    { id: 'ml', x, y: my }, { id: 'mr', x: rx, y: my },
+    { id: 'bl', x, y: by }, { id: 'bc', x: mx, y: by }, { id: 'br', x: rx, y: by }
+  ];
+}
+
+function getTrimPos(e) {
+  const r = trimCanvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - r.left, y: src.clientY - r.top };
+}
+
+function hitHandle(p) {
+  const W = trimCanvas.width, H = trimCanvas.height, { l, t, r, b } = trimCrop;
+  return getHandles(l, t, W - l - r, H - t - b).find(h => Math.abs(h.x - p.x) < HS && Math.abs(h.y - p.y) < HS) || null;
+}
+
+['mousedown', 'touchstart'].forEach(ev =>
+  trimCanvas.addEventListener(ev, e => {
+    if (ev === 'touchstart') e.preventDefault();
+    const p = getTrimPos(e);
+    trimDragHandle = hitHandle(p);
+    if (trimDragHandle) trimDragStart = p;
+  }, { passive: false })
+);
+['mousemove', 'touchmove'].forEach(ev =>
+  trimCanvas.addEventListener(ev, e => {
+    if (ev === 'touchmove') e.preventDefault();
+    const p = getTrimPos(e);
+    if (!trimDragHandle || !trimDragStart) return;
+    const W = trimCanvas.width, H = trimCanvas.height;
+    const dx = p.x - trimDragStart.x, dy = p.y - trimDragStart.y;
+    const id = trimDragHandle.id, MIN = 20, nc = { ...trimCrop };
+    if (id.includes('l')) nc.l = Math.max(0, Math.min(trimCrop.l + dx, W - trimCrop.r - MIN));
+    if (id.includes('r')) nc.r = Math.max(0, Math.min(trimCrop.r - dx, W - trimCrop.l - MIN));
+    if (id.includes('t')) nc.t = Math.max(0, Math.min(trimCrop.t + dy, H - trimCrop.b - MIN));
+    if (id.includes('b')) nc.b = Math.max(0, Math.min(trimCrop.b - dy, H - trimCrop.t - MIN));
+    trimCrop = nc; trimDragStart = p; drawTrim();
+  }, { passive: false })
+);
+['mouseup', 'touchend'].forEach(ev =>
+  trimCanvas.addEventListener(ev, () => { trimDragHandle = null; trimDragStart = null; })
+);
+
+function resetTrim() { trimCrop = { l: 0, t: 0, r: 0, b: 0 }; drawTrim(); }
+function saveTrim() {
+  const W = trimCanvas.width, H = trimCanvas.height, { l, t, r, b } = trimCrop;
+  const cw = W - l - r, ch = H - t - b;
+  if (cw < 10 || ch < 10) { alert('範囲が小さすぎます'); return; }
+  const out = document.createElement('canvas');
+  out.width = cw; out.height = ch;
+  out.getContext('2d').drawImage(
+    trimSrcImg,
+    (l / W) * trimSrcImg.width, (t / H) * trimSrcImg.height,
+    (cw / W) * trimSrcImg.width, (ch / H) * trimSrcImg.height,
+    0, 0, cw, ch
+  );
+  const ns = out.toDataURL('image/png');
+  trimThumbImg.src = ns; trimThumbImg.dataset.base = ns;
+  delete trimThumbImg.dataset.shapes;
+  closeTrim();
+}
+function closeTrim() { document.getElementById('trim-modal').classList.remove('open'); }
 
 // ========== ファイル名モーダル ==========
-let fnMode='';
-function openFilenameModal(mode){
-  fnMode=mode;
-  const name=document.querySelector('input.cell')?.value||'';
-  document.getElementById('fn-input').value=name?name+'_家屋調査報告書':'家屋調査報告書';
-  document.getElementById('fn-title').textContent=mode==='pdf'?'PDFのファイル名を入力':'HTMLのファイル名を入力';
-  document.getElementById('fn-ok-btn').onclick=()=>{const val=document.getElementById('fn-input').value.trim()||'家屋調査報告書';closeFilenameModal();if(fnMode==='pdf')savePDF(val);else downloadHTML(val);};
+let fnMode = '';
+function openFilenameModal(mode) {
+  fnMode = mode;
+  const name = document.querySelector('input.cell')?.value || '';
+  document.getElementById('fn-input').value = name ? name + '_家屋調査報告書' : '家屋調査報告書';
+  document.getElementById('fn-title').textContent = mode === 'pdf' ? 'PDFのファイル名を入力' : 'HTMLのファイル名を入力';
+  document.getElementById('fn-ok-btn').onclick = () => {
+    const val = document.getElementById('fn-input').value.trim() || '家屋調査報告書';
+    closeFilenameModal();
+    if (fnMode === 'pdf') savePDF(val); else downloadHTML(val);
+  };
   document.getElementById('filename-modal').classList.add('open');
-  setTimeout(()=>{const i=document.getElementById('fn-input');i.focus();i.select();},100);
+  setTimeout(() => { const i = document.getElementById('fn-input'); i.focus(); i.select(); }, 100);
 }
-function closeFilenameModal(){document.getElementById('filename-modal').classList.remove('open');}
+function closeFilenameModal() { document.getElementById('filename-modal').classList.remove('open'); }
 
 // ========== HTML保存 ==========
-function downloadHTML(filename){
-  const inputData=[];
-  document.querySelectorAll('input:not([type=file])').forEach(el=>inputData.push({value:el.value,checked:el.checked,type:el.type}));
-  const taData=[];
-  document.querySelectorAll('textarea').forEach(el=>taData.push(el.value));
-  const photoData=[];
-  document.querySelectorAll('.photo-thumb img').forEach(el=>photoData.push({src:el.src,base:el.dataset.base||el.src,shapes:el.dataset.shapes||''}));
-  const visibleIds=Array.from(document.querySelectorAll('.room-block')).map(b=>b.id);
-  const parser=new DOMParser();
-  const doc=parser.parseFromString(document.documentElement.outerHTML,'text/html');
-  const cI=doc.querySelectorAll('input:not([type=file])');
-  inputData.forEach((d,i)=>{if(!cI[i])return;cI[i].setAttribute('value',d.value);if(d.type==='radio'||d.type==='checkbox')d.checked?cI[i].setAttribute('checked','checked'):cI[i].removeAttribute('checked');});
-  const cT=doc.querySelectorAll('textarea');
-  taData.forEach((v,i)=>{if(cT[i])cT[i].textContent=v;});
-  const cP=doc.querySelectorAll('.photo-thumb img');
-  photoData.forEach((p,i)=>{if(!cP[i])return;cP[i].setAttribute('src',p.src);cP[i].setAttribute('data-base',p.base);if(p.shapes)cP[i].setAttribute('data-shapes',p.shapes);});
-  doc.querySelectorAll('.room-block').forEach(b=>{if(!visibleIds.includes(b.id))b.remove();});
-  const cContainer=doc.getElementById('rooms-container');
-  const cRestoreBar=doc.getElementById('restore-bar');
-  const cRestoreBtns=doc.getElementById('restore-btns');
-  if(Object.keys(deletedRooms).length>0&&cRestoreBar&&cRestoreBtns&&cContainer){
-    cRestoreBar.style.display='block';
-    Object.entries(deletedRooms).forEach(([id,data])=>{
-      const btn=doc.createElement('button');btn.className='restore-btn';btn.id='rb-'+id;btn.textContent='＋ '+data.label;btn.setAttribute('onclick',`_restoreRoom('${id}')`);cRestoreBtns.appendChild(btn);
-      const wrap=doc.createElement('div');wrap.id='del-'+id;wrap.style.display='none';wrap.innerHTML=data.el.outerHTML;cContainer.appendChild(wrap);
+function downloadHTML(filename) {
+  const inputData = [];
+  document.querySelectorAll('input:not([type=file])').forEach(el => inputData.push({ value: el.value, checked: el.checked, type: el.type }));
+  const taData = [];
+  document.querySelectorAll('textarea').forEach(el => taData.push(el.value));
+  const photoData = [];
+  document.querySelectorAll('.photo-thumb img').forEach(el => photoData.push({ src: el.src, base: el.dataset.base || el.src, shapes: el.dataset.shapes || '' }));
+  const visibleIds = Array.from(document.querySelectorAll('.room-block')).map(b => b.id);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(document.documentElement.outerHTML, 'text/html');
+
+  // 保存済みHTMLを再保存するときに重複する可能性のある要素を除去
+  // 前回保存時に追加された _restoreRoom スクリプトタグを削除
+  doc.querySelectorAll('script').forEach(s => {
+    if (s.textContent.includes('_restoreRoom') && !s.src) s.remove();
+  });
+  // 前回保存時に追加された del-* ラッパー div を削除（rooms-container直下）
+  doc.querySelectorAll('[id^="del-"]').forEach(el => el.remove());
+  // restore-btns をクリア（前回の復元ボタンが残っている場合）
+  const prevRestoreBtns = doc.getElementById('restore-btns');
+  if (prevRestoreBtns) prevRestoreBtns.innerHTML = '';
+  const prevRestoreBar = doc.getElementById('restore-bar');
+  if (prevRestoreBar) prevRestoreBar.style.display = 'none';
+
+  const cI = doc.querySelectorAll('input:not([type=file])');
+  inputData.forEach((d, i) => {
+    if (!cI[i]) return;
+    cI[i].setAttribute('value', d.value);
+    if (d.type === 'radio' || d.type === 'checkbox') d.checked ? cI[i].setAttribute('checked', 'checked') : cI[i].removeAttribute('checked');
+  });
+  const cT = doc.querySelectorAll('textarea');
+  taData.forEach((v, i) => { if (cT[i]) cT[i].textContent = v; });
+  const cP = doc.querySelectorAll('.photo-thumb img');
+  photoData.forEach((p, i) => {
+    if (!cP[i]) return;
+    cP[i].setAttribute('src', p.src);
+    cP[i].setAttribute('data-base', p.base);
+    if (p.shapes) cP[i].setAttribute('data-shapes', p.shapes);
+  });
+  doc.querySelectorAll('.room-block').forEach(b => { if (!visibleIds.includes(b.id)) b.remove(); });
+  const cContainer = doc.getElementById('rooms-container');
+  const cRestoreBar = doc.getElementById('restore-bar');
+  const cRestoreBtns = doc.getElementById('restore-btns');
+  if (Object.keys(deletedRooms).length > 0 && cRestoreBar && cRestoreBtns && cContainer) {
+    cRestoreBar.style.display = 'block';
+    Object.entries(deletedRooms).forEach(([id, data]) => {
+      const btn = doc.createElement('button');
+      btn.className = 'restore-btn'; btn.id = 'rb-' + id; btn.textContent = '＋ ' + data.label;
+      btn.setAttribute('onclick', `_restoreRoom('${id}')`); cRestoreBtns.appendChild(btn);
+      const wrap = doc.createElement('div');
+      wrap.id = 'del-' + id; wrap.style.display = 'none'; wrap.innerHTML = data.el.outerHTML;
+      cContainer.appendChild(wrap);
     });
   }
-  const sc=doc.createElement('script');
-  sc.textContent=`function _restoreRoom(id){const wrap=document.getElementById('del-'+id);if(!wrap)return;const block=wrap.firstElementChild;if(!block)return;wrap.remove();const c=document.getElementById('rooms-container');if(id.startsWith('room-')){const n=parseInt(id.replace('room-',''));const all=Array.from(c.querySelectorAll('[id^=room-]'));const next=all.find(b=>parseInt(b.id.replace('room-',''))>n);next?c.insertBefore(block,next):c.appendChild(block);}else c.appendChild(block);document.getElementById('rb-'+id)?.remove();if(!document.getElementById('restore-btns').children.length)document.getElementById('restore-bar').style.display='none';}`;
+  const sc = doc.createElement('script');
+  sc.textContent = `function _restoreRoom(id){const wrap=document.getElementById('del-'+id);if(!wrap)return;const block=wrap.firstElementChild;if(!block)return;wrap.remove();const c=document.getElementById('rooms-container');if(id.startsWith('room-')){const n=parseInt(id.replace('room-',''));const all=Array.from(c.querySelectorAll('[id^=room-]'));const next=all.find(b=>parseInt(b.id.replace('room-',''))>n);next?c.insertBefore(block,next):c.appendChild(block);}else c.appendChild(block);document.getElementById('rb-'+id)?.remove();if(!document.getElementById('restore-btns').children.length)document.getElementById('restore-bar').style.display='none';}`;
   doc.body.appendChild(sc);
-  const html='<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
-  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=(filename||'家屋調査報告書')+'.html';a.style.display='none';
+  const html = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = (filename || '家屋調査報告書') + '.html'; a.style.display = 'none';
   document.body.appendChild(a);
-  a.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window}));
-  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},3000);
+  a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 3000);
+}
+
+// ========== ライブラリ読み込み（window上のオブジェクト存在で判定） ==========
+function loadScript(src, windowKey) {
+  return new Promise((res, rej) => {
+    // すでにwindowにバインド済みなら即解決
+    if (windowKey && window[windowKey]) { res(); return; }
+    // scriptタグが存在しても window にない場合は強制再読み込み
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) existing.remove();
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = res;
+    s.onerror = rej;
+    document.head.appendChild(s);
+  });
 }
 
 // ========== PDF保存 ==========
-async function savePDF(filename){
-  const btns=document.querySelectorAll('.btn-bar button');
-  btns.forEach(b=>b.disabled=true);
-  document.querySelectorAll('.no-print').forEach(el=>el.style.visibility='hidden');
-  const page=document.querySelector('.page');
-  const origStyle=page.getAttribute('style')||'';
-  page.style.cssText='width:794px !important;max-width:794px !important;padding:20px 24px !important;margin:0 !important;box-shadow:none !important;';
-  const saved=[];
-  document.querySelectorAll('.room-inner,.room-left,.room-right').forEach(el=>{saved.push({el,style:el.getAttribute('style')||''});});
-  document.querySelectorAll('.room-inner').forEach(el=>el.style.cssText='display:flex !important;flex-direction:row !important;');
-  document.querySelectorAll('.room-left').forEach(el=>el.style.cssText='flex:1 !important;border-bottom:none !important;border-right:1px solid #ddd !important;');
-  document.querySelectorAll('.room-right').forEach(el=>el.style.cssText='flex:1 !important;');
-  const loadScript=(src)=>new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`)){res();return;}const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});
-  try{
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    const{jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const pW=pdf.internal.pageSize.getWidth(),pH=pdf.internal.pageSize.getHeight();
-    const margin=10,printW=pW-margin*2;
-    let curY=margin;
-    const addEl=async(el)=>{
-      const c=await html2canvas(el,{scale:2,useCORS:true,allowTaint:true,logging:false,width:794,windowWidth:794});
-      const ratio=c.height/c.width;let w=printW,h=w*ratio;
-      if(h>pH-margin*2){h=pH-margin*2;w=h/ratio;}
-      if(curY+h>pH-margin){pdf.addPage();curY=margin;}
-      pdf.addImage(c.toDataURL('image/jpeg',.92),'JPEG',margin+(printW-w)/2,curY,w,h);
-      curY+=h+4;
+async function savePDF(filename) {
+  const btns = document.querySelectorAll('.btn-bar button');
+  btns.forEach(b => b.disabled = true);
+  document.querySelectorAll('.no-print').forEach(el => el.style.visibility = 'hidden');
+  const page = document.querySelector('.page');
+  const origStyle = page.getAttribute('style') || '';
+  page.style.cssText = 'width:794px !important;max-width:794px !important;padding:20px 24px !important;margin:0 !important;box-shadow:none !important;';
+  const saved = [];
+  document.querySelectorAll('.room-inner,.room-left,.room-right').forEach(el => { saved.push({ el, style: el.getAttribute('style') || '' }); });
+  document.querySelectorAll('.room-inner').forEach(el => el.style.cssText = 'display:flex !important;flex-direction:row !important;');
+  document.querySelectorAll('.room-left').forEach(el => el.style.cssText = 'flex:1 !important;border-bottom:none !important;border-right:1px solid #ddd !important;');
+  document.querySelectorAll('.room-right').forEach(el => el.style.cssText = 'flex:1 !important;');
+  try {
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas');
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'jspdf');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pW = pdf.internal.pageSize.getWidth(), pH = pdf.internal.pageSize.getHeight();
+    const margin = 10, printW = pW - margin * 2;
+    let curY = margin;
+    const addEl = async (el) => {
+      const c = await html2canvas(el, { scale: 2, useCORS: true, allowTaint: true, logging: false, width: 794, windowWidth: 794 });
+      const ratio = c.height / c.width; let w = printW, h = w * ratio;
+      if (h > pH - margin * 2) { h = pH - margin * 2; w = h / ratio; }
+      if (curY + h > pH - margin) { pdf.addPage(); curY = margin; }
+      pdf.addImage(c.toDataURL('image/jpeg', .92), 'JPEG', margin + (printW - w) / 2, curY, w, h);
+      curY += h + 4;
     };
     await addEl(document.querySelector('h1'));
     await addEl(document.querySelector('.header-info'));
     await addEl(document.querySelector('.section'));
-    for(const block of document.querySelectorAll('.room-block'))await addEl(block);
+    for (const block of document.querySelectorAll('.room-block')) await addEl(block);
     await addEl(document.querySelector('.page>div:last-of-type'));
-    pdf.save((filename||'家屋調査報告書')+'.pdf');
-  }catch(e){alert('PDF生成に失敗しました。');}
-  finally{
-    page.setAttribute('style',origStyle);
-    saved.forEach(({el,style})=>el.setAttribute('style',style));
-    document.querySelectorAll('.no-print').forEach(el=>el.style.visibility='');
-    btns.forEach(b=>b.disabled=false);
+    pdf.save((filename || '家屋調査報告書') + '.pdf');
+  } catch (e) {
+    alert('PDF生成に失敗しました。');
+  } finally {
+    page.setAttribute('style', origStyle);
+    saved.forEach(({ el, style }) => el.setAttribute('style', style));
+    document.querySelectorAll('.no-print').forEach(el => el.style.visibility = '');
+    btns.forEach(b => b.disabled = false);
   }
 }
 </script>
