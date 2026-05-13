@@ -669,7 +669,7 @@ var _cleanSourceCache = null;
   try {
     var clone = document.documentElement.cloneNode(true);
     // ローダー系タグ（保存済みHTMLを開いた場合に存在する）を除去
-    ['saved-data-loader','saved-data-b64'].forEach(function(id){
+    ['saved-data-loader','saved-data-b64','__room-stash'].forEach(function(id){
       var el = clone.querySelector('#' + id);
       if(el) el.remove();
     });
@@ -688,11 +688,24 @@ var _cleanSourceCache = null;
 const deletedRooms = {};
 let customCount = 0;
 
+// 削除済み部屋の非表示保管場所（DOMに残したまま管理）
+function _getRoomStash() {
+  var s = document.getElementById('__room-stash');
+  if (!s) {
+    s = document.createElement('div');
+    s.id = '__room-stash';
+    s.style.display = 'none';
+    document.body.appendChild(s);
+  }
+  return s;
+}
+
 function deleteRoom(id, label) {
   const block = document.getElementById(id);
   if (!block) return;
   deletedRooms[id] = { el: block, label };
-  block.remove();
+  // DOMから完全削除せず、非表示スタッシュに移動（復元時に再利用できる）
+  _getRoomStash().appendChild(block);
   document.getElementById('restore-bar').style.display = 'block';
   const btn = document.createElement('button');
   btn.className = 'restore-btn'; btn.id = 'rb-' + id; btn.textContent = '＋ ' + label;
@@ -1308,6 +1321,8 @@ function _b64decode(b64){
 function _stripDynamicTags(html){
   html = html.replace(/<script\s+id="saved-data-loader"[\s\S]*?<\/script>/gi, '');
   html = html.replace(/<script\s+id="saved-data-b64"[^>]*>[\s\S]*?<\/script>/gi, '');
+  // 非表示スタッシュ（削除済み部屋の保管場所）を除去
+  html = html.replace(/<div\s+id="__room-stash"[\s\S]*?<\/div>/gi, '');
   return html;
 }
 
@@ -1339,7 +1354,7 @@ async function _getCleanSourceHtml(){
 
   // --- 3. フォールバック：再度DOMクローン作成 ---
   var clone = document.documentElement.cloneNode(true);
-  ['saved-data-loader','saved-data-b64'].forEach(function(id){
+  ['saved-data-loader','saved-data-b64','__room-stash'].forEach(function(id){
     var el = clone.querySelector('#'+id);
     if(el) el.remove();
   });
@@ -1367,35 +1382,33 @@ async function downloadHTML(filename) {
   try {
 
   // --- 入力値を収集 ---
-  // ローダーのmakeKey()と同じロジックでキーを生成し、復元時に一意に照合できるようにする
-  function _makeFieldKey(el, globalIdx){
-    if(el.id) return el.id;
-    if(el.name){
-      var v = (el.type==='radio'||el.type==='checkbox') ? ('_'+el.value) : '';
-      return el.name + v;
-    }
-    var room = el.closest('.room-block');
-    if(room){
-      var siblings = Array.from(room.querySelectorAll('input:not([type=file]),textarea,select'));
-      return (room.id||'room') + '_' + siblings.indexOf(el);
-    }
-    return '__g' + globalIdx;
-  }
+  // 各inputを「親room-blockのid + ブロック内での連番」で識別する。
+  // room-blockの外（ヘッダー部）のinputは「__header_連番」で識別する。
   var fields = [];
-  document.querySelectorAll('input:not([type=file]), textarea, select').forEach(function(el, idx){
-    var key = _makeFieldKey(el, idx);
-    if(el.tagName==='TEXTAREA'){
-      fields.push({key:key, tag:'textarea', id:el.id, name:el.name, value:el.value});
-    } else if(el.type==='radio'){
-      // radioはグループで1つのキー。checked状態をcheckedValueとして保存
-      fields.push({key:key, tag:'input', id:el.id, name:el.name, type:'radio',
-                   value:el.value, checked:el.checked, checkedValue: el.checked ? el.value : null});
-    } else {
-      fields.push({key:key, tag:'input', id:el.id, name:el.name, type:el.type, value:el.value, checked:el.checked});
-    }
+  document.querySelectorAll('input:not([type=file]), textarea, select').forEach(function(el){
+    var room = el.closest('.room-block');
+    var roomId = room ? room.id : '__header';
+    var scope = room || document.querySelector('.header-info, .section');
+    var allInScope = Array.from((scope || document).querySelectorAll('input:not([type=file]),textarea,select'));
+    var idx = allInScope.indexOf(el);
+    var key = roomId + '::' + idx;
+    fields.push({
+      key: key,
+      type: el.type || el.tagName.toLowerCase(),
+      value: el.value || '',
+      checked: el.type === 'radio' || el.type === 'checkbox' ? el.checked : false
+    });
   });
 
-  // --- 写真を収集（部屋とは別に管理） ---
+  // --- 表示中の部屋IDリストを収集（順序も保持） ---
+  var visibleRoomIds = Array.from(document.querySelectorAll('#rooms-container > .room-block')).map(function(b){ return b.id; });
+
+  // --- 削除済み部屋を収集（HTMLは保存しない。復元時はクリーンHTMLから取り出す） ---
+  var deletedList = Object.keys(deletedRooms).map(function(id){
+    return { id: id, label: deletedRooms[id].label };
+  });
+
+  // --- 写真を収集 ---
   var photos = [];
   document.querySelectorAll('.photo-thumb').forEach(function(thumb){
     var img = thumb.querySelector('img');
@@ -1410,24 +1423,93 @@ async function downloadHTML(filename) {
     }
   });
 
-  // --- 部屋ブロック（写真を除外した構造のみ）を収集 ---
-  var visibleRooms = Array.from(document.querySelectorAll('#rooms-container > .room-block')).map(function(b){
-    return { id: b.id, html: _getRoomHtmlWithoutPhotos(b) };
-  });
-
-  var deletedList = Object.entries(deletedRooms).map(function(entry){
-    return { id: entry[0], label: entry[1].label, html: _getRoomHtmlWithoutPhotos(entry[1].el) };
-  });
-
-  var saveData = { fields: fields, photos: photos, visibleRooms: visibleRooms, deletedList: deletedList };
+  var saveData = { fields: fields, visibleRoomIds: visibleRoomIds, deletedList: deletedList, photos: photos };
 
   // --- クリーンソースを取得（固定URLからfetch: await必須） ---
   var cleanSrc = await _getCleanSourceHtml();
 
-  // --- 保存データをBase64エンコード（JSONエスケープ問題を完全回避） ---
+  // --- 保存データをBase64エンコード ---
   var dataB64 = _b64encode(JSON.stringify(saveData));
 
-  // --- ローダースクリプト（データはBase64デコードして読み込む） ---
+  // --- ローダースクリプト ---
+  // 復元手順:
+  //   1. クリーンHTMLの全8部屋が既にDOMにある状態からスタート
+  //   2. visibleRoomIdsに基づいて不要な部屋を非表示(remove)し、順序を並び替え
+  //   3. deletedListの部屋をdeletedRoomsに登録し復元バーにボタンを追加
+  //   4. fields（key=roomId::idx）で各inputに値を復元
+  //   5. 写真を追加
+  var loaderScript = '<script id="saved-data-loader">\n(function(){\n' +
+    'function d64(b){var b2=atob(b),a=new Uint8Array(b2.length);for(var i=0;i<b2.length;i++)a[i]=b2.charCodeAt(i);return new TextDecoder("utf-8").decode(a);}\n' +
+    'var data=JSON.parse(d64(document.getElementById("saved-data-b64").textContent.trim()));\n' +
+    'function restore(){\n' +
+    // ① フィールド値を復元（DOMはクリーンな状態のまま使う）
+    // まずヘッダー部のinputを復元
+    'var headerInputs=Array.from(document.querySelectorAll(".header-info input, .header-info textarea, .header-info select, table input, table textarea"));\n' +
+    'if(data.fields){data.fields.forEach(function(f){\n' +
+    'var parts=f.key.split("::");\n' +
+    'var roomId=parts[0];var idx=parseInt(parts[1]);\n' +
+    'var scope=null;\n' +
+    'if(roomId==="__header"){\n' +
+    // ヘッダースコープ：.header-info + table（実施情報）
+    'scope=document.querySelector(".page");}\n' +
+    'else{scope=document.getElementById(roomId);}\n' +
+    'if(!scope)return;\n' +
+    'var inputs=Array.from(scope.querySelectorAll("input:not([type=file]),textarea,select"));\n' +
+    'var el=inputs[idx];if(!el)return;\n' +
+    'if(f.type==="textarea"||el.tagName==="TEXTAREA"){el.value=f.value;}\n' +
+    'else if(f.type==="radio"){el.checked=f.checked;}\n' +
+    'else if(f.type==="checkbox"){el.checked=f.checked;}\n' +
+    'else{el.value=f.value;}\n' +
+    '});}\n' +
+    // ② 部屋の表示/非表示を制御
+    'var container=document.getElementById("rooms-container");\n' +
+    'if(container&&data.visibleRoomIds){\n' +
+    // 表示する部屋を順番に並べ直す
+    'var allRooms=Array.from(container.querySelectorAll(".room-block"));\n' +
+    'allRooms.forEach(function(r){r.remove();});\n' +
+    'data.visibleRoomIds.forEach(function(id){\n' +
+    'var room=allRooms.find(function(r){return r.id===id;});\n' +
+    'if(room)container.appendChild(room);\n' +
+    '});\n' +
+    '}\n' +
+    // ③ 削除済み部屋を復元バーに登録
+    'if(data.deletedList&&data.deletedList.length>0){\n' +
+    'var bar=document.getElementById("restore-bar");\n' +
+    'var btns=document.getElementById("restore-btns");\n' +
+    'if(bar&&btns){\n' +
+    'bar.style.display="block";\n' +
+    'data.deletedList.forEach(function(item){\n' +
+    // DOMに残っている（非表示にしただけの）部屋要素を取得
+    'var el=document.getElementById(item.id);\n' +
+    'if(!el)return;\n' +
+    'if(typeof deletedRooms!=="undefined")deletedRooms[item.id]={el:el,label:item.label};\n' +
+    'var btn=document.createElement("button");btn.className="restore-btn";btn.id="rb-"+item.id;\n' +
+    'btn.textContent="＋ "+item.label;\n' +
+    'btn.onclick=function(){restoreRoom(item.id);};\n' +
+    'btns.appendChild(btn);\n' +
+    '});\n' +
+    '}}\n' +
+    // ④ 写真を追加
+    'if(data.photos){\n' +
+    'data.photos.forEach(function(p){\n' +
+    'var grid=document.getElementById(p.gridId);if(!grid)return;\n' +
+    'var thumb=document.createElement("div");thumb.className="photo-thumb";\n' +
+    'var img=document.createElement("img");img.src=p.src;img.alt="写真";img.dataset.base=p.base;\n' +
+    'if(p.shapes)img.dataset.shapes=p.shapes;\n' +
+    'var delBtn=document.createElement("button");delBtn.className="del-btn no-print";delBtn.textContent="x";\n' +
+    'delBtn.onclick=function(){thumb.remove();};\n' +
+    'var editBtn=document.createElement("button");editBtn.className="edit-btn no-print";editBtn.textContent="編集";\n' +
+    'editBtn.onclick=function(){openAnno(img);};\n' +
+    'var trimBtn=document.createElement("button");trimBtn.className="trim-btn no-print";trimBtn.textContent="トリミング";\n' +
+    'trimBtn.onclick=function(){openTrim(img);};\n' +
+    'thumb.appendChild(img);thumb.appendChild(delBtn);\n' +
+    'thumb.appendChild(editBtn);thumb.appendChild(trimBtn);\n' +
+    'grid.appendChild(thumb);\n' +
+    '});\n' +
+    '}\n' +
+    '}\n' +
+    'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",restore);}else{restore();}\n' +
+    '})();\n<\/script>';
   var loaderScript = '<script id="saved-data-loader">\n(function(){\n' +
     'function d64(b){var b2=atob(b),a=new Uint8Array(b2.length);for(var i=0;i<b2.length;i++)a[i]=b2.charCodeAt(i);return new TextDecoder("utf-8").decode(a);}\n' +
     'var data=JSON.parse(d64(document.getElementById("saved-data-b64").textContent.trim()));\n' +
