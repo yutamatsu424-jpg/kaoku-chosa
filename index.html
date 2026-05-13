@@ -1367,12 +1367,31 @@ async function downloadHTML(filename) {
   try {
 
   // --- 入力値を収集 ---
+  // ローダーのmakeKey()と同じロジックでキーを生成し、復元時に一意に照合できるようにする
+  function _makeFieldKey(el, globalIdx){
+    if(el.id) return el.id;
+    if(el.name){
+      var v = (el.type==='radio'||el.type==='checkbox') ? ('_'+el.value) : '';
+      return el.name + v;
+    }
+    var room = el.closest('.room-block');
+    if(room){
+      var siblings = Array.from(room.querySelectorAll('input:not([type=file]),textarea,select'));
+      return (room.id||'room') + '_' + siblings.indexOf(el);
+    }
+    return '__g' + globalIdx;
+  }
   var fields = [];
-  document.querySelectorAll('input:not([type=file]), textarea, select').forEach(function(el){
+  document.querySelectorAll('input:not([type=file]), textarea, select').forEach(function(el, idx){
+    var key = _makeFieldKey(el, idx);
     if(el.tagName==='TEXTAREA'){
-      fields.push({tag:'textarea', id:el.id, name:el.name, value:el.value});
+      fields.push({key:key, tag:'textarea', id:el.id, name:el.name, value:el.value});
+    } else if(el.type==='radio'){
+      // radioはグループで1つのキー。checked状態をcheckedValueとして保存
+      fields.push({key:key, tag:'input', id:el.id, name:el.name, type:'radio',
+                   value:el.value, checked:el.checked, checkedValue: el.checked ? el.value : null});
     } else {
-      fields.push({tag:'input', id:el.id, name:el.name, type:el.type, value:el.value, checked:el.checked});
+      fields.push({key:key, tag:'input', id:el.id, name:el.name, type:el.type, value:el.value, checked:el.checked});
     }
   });
 
@@ -1412,15 +1431,36 @@ async function downloadHTML(filename) {
   var loaderScript = '<script id="saved-data-loader">\n(function(){\n' +
     'function d64(b){var b2=atob(b),a=new Uint8Array(b2.length);for(var i=0;i<b2.length;i++)a[i]=b2.charCodeAt(i);return new TextDecoder("utf-8").decode(a);}\n' +
     'var data=JSON.parse(d64(document.getElementById("saved-data-b64").textContent.trim()));\n' +
-    'function restore(){\n' +
+    // input要素に一意キーを付与する関数（保存時・復元時で共通）
+    // id > name+"[radio/checkbox value]" > 親room-blockのid+"_"+ブロック内インデックス > 全体インデックス
+    'function makeKey(el,globalIdx){\n' +
+    'if(el.id)return el.id;\n' +
+    'if(el.name){\n' +
+    'var v=(el.type==="radio"||el.type==="checkbox")?("_"+el.value):"" ;\n' +
+    'return el.name+v;\n' +
+    '}\n' +
+    'var room=el.closest(".room-block");\n' +
+    'if(room){\n' +
+    'var siblings=Array.from(room.querySelectorAll("input:not([type=file]),textarea,select"));\n' +
+    'return (room.id||"room")+"_"+siblings.indexOf(el);\n' +
+    '}\n' +
+    'return "__g"+globalIdx;\n' +
+    '}\n' +
+    'function restoreFields(){\n' +
+    'var map={};\n' +
+    'if(data.fields){data.fields.forEach(function(f){if(f.key)map[f.key]=f;});}\n' +
     'var inputs=document.querySelectorAll("input:not([type=file]),textarea,select");\n' +
-    'var fi=0;\n' +
-    'inputs.forEach(function(el){\n' +
-    'var f=data.fields[fi++];if(!f)return;\n' +
-    'if(el.tagName==="TEXTAREA"){el.value=f.value;}\n' +
-    'else if(f.type==="radio"||f.type==="checkbox"){el.checked=f.checked;if(f.checked)el.setAttribute("checked","checked");}\n' +
-    'else{el.value=f.value;el.setAttribute("value",f.value);}\n' +
+    'inputs.forEach(function(el,idx){\n' +
+    'var k=makeKey(el,idx);\n' +
+    'var f=map[k];if(!f)return;\n' +
+    'if(el.tagName==="TEXTAREA"){el.value=f.value||"";}\n' +
+    'else if(f.type==="radio"){el.checked=(el.value===f.checkedValue);}\n' +
+    'else if(f.type==="checkbox"){el.checked=!!f.checked;}\n' +
+    'else{el.value=f.value||"";}\n' +
     '});\n' +
+    '}\n' +
+    'function restore(){\n' +
+    // ① rooms-container を先に上書き
     'var container=document.getElementById("rooms-container");\n' +
     'if(container&&data.visibleRooms){\n' +
     'container.innerHTML="";\n' +
@@ -1429,6 +1469,9 @@ async function downloadHTML(filename) {
     'container.appendChild(d.firstElementChild);\n' +
     '});\n' +
     '}\n' +
+    // ② rooms上書き後にフィールド値を復元
+    'restoreFields();\n' +
+    // ③ 写真を追加
     'if(data.photos){\n' +
     'data.photos.forEach(function(p){\n' +
     'var grid=document.getElementById(p.gridId);if(!grid)return;\n' +
@@ -1446,6 +1489,7 @@ async function downloadHTML(filename) {
     'grid.appendChild(thumb);\n' +
     '});\n' +
     '}\n' +
+    // ④ 削除済みリストを復元
     'if(data.deletedList&&data.deletedList.length>0){\n' +
     'var bar=document.getElementById("restore-bar");\n' +
     'var btns=document.getElementById("restore-btns");\n' +
