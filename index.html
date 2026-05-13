@@ -549,7 +549,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
     <span>作成日：<input class="inline" type="text" placeholder="　年　月　日"></span>
     <span>作成者：<input class="inline" type="text" placeholder="氏名"></span>
   </div>
-  <div style="text-align:right;font-size:10pt;margin-bottom:14px;">ビハーラ光風通所リハビリテーション</div>
+  <div id="facility-name" style="text-align:right;font-size:10pt;margin-bottom:14px;">ビハーラ光風通所リハビリテーション</div>
   <div class="section">
     <div class="section-title">■ 実施情報</div>
     <table>
@@ -1252,72 +1252,221 @@ function openFilenameModal(mode) {
 function closeFilenameModal() { document.getElementById('filename-modal').classList.remove('open'); }
 
 // ========== HTML保存 ==========
-function downloadHTML(filename) {
-  const inputData = [];
-  document.querySelectorAll('input:not([type=file])').forEach(el => inputData.push({ value: el.value, checked: el.checked, type: el.type }));
-  const taData = [];
-  document.querySelectorAll('textarea').forEach(el => taData.push(el.value));
-  const photoData = [];
-  document.querySelectorAll('.photo-thumb img').forEach(el => photoData.push({ src: el.src, base: el.dataset.base || el.src, shapes: el.dataset.shapes || '' }));
-  const visibleIds = Array.from(document.querySelectorAll('.room-block')).map(b => b.id);
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(document.documentElement.outerHTML, 'text/html');
+// 方式（v3）：
+//  クリーンソースは「アプリ本体の固定URL」から毎回fetchして取得する。
+//  保存済みHTMLからfetchすると「データ入りHTML」を取得してしまうため、
+//  固定URLを使うことで、どのHTML（アプリ本体・保存済み）を開いていても
+//  常にクリーンなアプリ本体を取得できる。
+//
+//  固定URL取得に成功したらキャッシュ（_cleanSourceCache）に保持し、
+//  2回目以降はfetchしない。
+//
+//  fetchが失敗した場合（ネットワーク断・file://等）はフォールバックとして
+//  DOMクローン方式を使う（精度は劣るが一応動作する）。
 
-  // 保存済みHTMLを再保存するときに重複する可能性のある要素を除去
-  // 前回保存時に追加された _restoreRoom スクリプトタグを削除
-  doc.querySelectorAll('script').forEach(s => {
-    if (s.textContent.includes('_restoreRoom') && !s.src) s.remove();
-  });
-  // 前回保存時に追加された del-* ラッパー div を削除（rooms-container直下）
-  doc.querySelectorAll('[id^="del-"]').forEach(el => el.remove());
-  // restore-btns をクリア（前回の復元ボタンが残っている場合）
-  const prevRestoreBtns = doc.getElementById('restore-btns');
-  if (prevRestoreBtns) prevRestoreBtns.innerHTML = '';
-  const prevRestoreBar = doc.getElementById('restore-bar');
-  if (prevRestoreBar) prevRestoreBar.style.display = 'none';
+// アプリ本体の固定URL
+var _APP_SOURCE_URL = 'https://yutamatsu424-jpg.github.io/kaoku-chosa/kaoku-chosa.html';
 
-  const cI = doc.querySelectorAll('input:not([type=file])');
-  inputData.forEach((d, i) => {
-    if (!cI[i]) return;
-    cI[i].setAttribute('value', d.value);
-    if (d.type === 'radio' || d.type === 'checkbox') d.checked ? cI[i].setAttribute('checked', 'checked') : cI[i].removeAttribute('checked');
-  });
-  const cT = doc.querySelectorAll('textarea');
-  taData.forEach((v, i) => { if (cT[i]) cT[i].textContent = v; });
-  const cP = doc.querySelectorAll('.photo-thumb img');
-  photoData.forEach((p, i) => {
-    if (!cP[i]) return;
-    cP[i].setAttribute('src', p.src);
-    cP[i].setAttribute('data-base', p.base);
-    if (p.shapes) cP[i].setAttribute('data-shapes', p.shapes);
-  });
-  doc.querySelectorAll('.room-block').forEach(b => { if (!visibleIds.includes(b.id)) b.remove(); });
-  const cContainer = doc.getElementById('rooms-container');
-  const cRestoreBar = doc.getElementById('restore-bar');
-  const cRestoreBtns = doc.getElementById('restore-btns');
-  if (Object.keys(deletedRooms).length > 0 && cRestoreBar && cRestoreBtns && cContainer) {
-    cRestoreBar.style.display = 'block';
-    Object.entries(deletedRooms).forEach(([id, data]) => {
-      const btn = doc.createElement('button');
-      btn.className = 'restore-btn'; btn.id = 'rb-' + id; btn.textContent = '＋ ' + data.label;
-      btn.setAttribute('onclick', `_restoreRoom('${id}')`); cRestoreBtns.appendChild(btn);
-      const wrap = doc.createElement('div');
-      wrap.id = 'del-' + id; wrap.style.display = 'none'; wrap.innerHTML = data.el.outerHTML;
-      cContainer.appendChild(wrap);
-    });
+// クリーンソースのキャッシュ（セッション中は再fetchしない）
+var _cleanSourceCache = null;
+
+function _b64encode(str){
+  var bytes = new TextEncoder().encode(str);
+  var bin = '';
+  for(var i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+function _b64decode(b64){
+  var bin = atob(b64);
+  var bytes = new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+
+function _stripDynamicTags(html){
+  // saved-data-loader・saved-data-b64 を除去（保存時に挿入した動的タグ）
+  html = html.replace(/<script\s+id="saved-data-loader"[\s\S]*?<\/script>/gi, '');
+  html = html.replace(/<script\s+id="saved-data-b64"[^>]*>[\s\S]*?<\/script>/gi, '');
+  return html;
+}
+
+// クリーンソースを取得する（async）
+// 優先順位：
+//   1. セッションキャッシュ済み → そのまま返す
+//   2. 固定URL(_APP_SOURCE_URL)からfetch → 常にクリーンなアプリ本体を取得
+//   3. フォールバック：DOMクローン方式（file://・オフライン時）
+async function _getCleanSourceHtml(){
+  // --- 1. セッションキャッシュ済みなら即返す ---
+  if(_cleanSourceCache){
+    return _cleanSourceCache;
   }
-  const sc = doc.createElement('script');
-  sc.textContent = `function _restoreRoom(id){const wrap=document.getElementById('del-'+id);if(!wrap)return;const block=wrap.firstElementChild;if(!block)return;wrap.remove();const c=document.getElementById('rooms-container');if(id.startsWith('room-')){const n=parseInt(id.replace('room-',''));const all=Array.from(c.querySelectorAll('[id^=room-]'));const next=all.find(b=>parseInt(b.id.replace('room-',''))>n);next?c.insertBefore(block,next):c.appendChild(block);}else c.appendChild(block);document.getElementById('rb-'+id)?.remove();if(!document.getElementById('restore-btns').children.length)document.getElementById('restore-bar').style.display='none';}`;
-  doc.body.appendChild(sc);
 
-  const html = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  // --- 2. アプリ本体の固定URLからfetch ---
+  if(location.protocol === 'https:' || location.protocol === 'http:'){
+    try {
+      var res = await fetch(_APP_SOURCE_URL, { cache: 'no-store' });
+      if(res.ok){
+        var src = await res.text();
+        // 動的タグを除去（万が一保存済みHTMLのURLが誤設定された場合の保険）
+        src = _stripDynamicTags(src);
+        _cleanSourceCache = src; // セッションキャッシュに保存
+        return src;
+      }
+    } catch(e){
+      console.warn('fetch from app URL failed, falling back to DOM clone:', e);
+    }
+  }
+
+  // --- 3. フォールバック：DOMクローン方式（file://・オフライン時） ---
+  var clone = document.documentElement.cloneNode(true);
+  ['saved-data-loader','saved-data-b64'].forEach(function(id){
+    var el = clone.querySelector('#'+id);
+    if(el) el.remove();
+  });
+  var restoreBtns = clone.querySelector('#restore-btns');
+  if(restoreBtns) restoreBtns.innerHTML = '';
+  var restoreBar = clone.querySelector('#restore-bar');
+  if(restoreBar) restoreBar.style.display = 'none';
+  clone.querySelectorAll('.photo-thumb').forEach(function(t){ t.remove(); });
+  return clone.outerHTML;
+}
+
+// 部屋ブロックのouterHTMLから写真(.photo-thumb)を除去し、写真グリッドを空にした構造HTMLを返す
+function _getRoomHtmlWithoutPhotos(block){
+  var clone = block.cloneNode(true);
+  clone.querySelectorAll('.photo-thumb').forEach(function(t){ t.remove(); });
+  return clone.outerHTML;
+}
+
+async function downloadHTML(filename) {
+  // --- 保存中表示 ---
+  var saveBtn = document.querySelector('.btn-save');
+  var origText = saveBtn ? saveBtn.textContent : '';
+  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = '保存中...'; }
+
+  try {
+
+  // --- 入力値を収集 ---
+  var fields = [];
+  document.querySelectorAll('input:not([type=file]), textarea, select').forEach(function(el){
+    if(el.tagName==='TEXTAREA'){
+      fields.push({tag:'textarea', id:el.id, name:el.name, value:el.value});
+    } else {
+      fields.push({tag:'input', id:el.id, name:el.name, type:el.type, value:el.value, checked:el.checked});
+    }
+  });
+
+  // --- 写真を収集（部屋とは別に管理） ---
+  var photos = [];
+  document.querySelectorAll('.photo-thumb').forEach(function(thumb){
+    var img = thumb.querySelector('img');
+    var grid = thumb.closest('.photo-grid');
+    if(img && grid){
+      photos.push({
+        gridId: grid.id,
+        src: img.src,
+        base: img.dataset.base || img.src,
+        shapes: img.dataset.shapes || ''
+      });
+    }
+  });
+
+  // --- 部屋ブロック（写真を除外した構造のみ）を収集 ---
+  var visibleRooms = Array.from(document.querySelectorAll('#rooms-container > .room-block')).map(function(b){
+    return { id: b.id, html: _getRoomHtmlWithoutPhotos(b) };
+  });
+
+  var deletedList = Object.entries(deletedRooms).map(function(entry){
+    return { id: entry[0], label: entry[1].label, html: _getRoomHtmlWithoutPhotos(entry[1].el) };
+  });
+
+  var saveData = { fields: fields, photos: photos, visibleRooms: visibleRooms, deletedList: deletedList };
+
+  // --- クリーンソースを取得（固定URLからfetch: await必須） ---
+  var cleanSrc = await _getCleanSourceHtml();
+
+  // --- 保存データをBase64エンコード（JSONエスケープ問題を完全回避） ---
+  var dataB64 = _b64encode(JSON.stringify(saveData));
+
+  // --- ローダースクリプト（データはBase64デコードして読み込む） ---
+  var loaderScript = '<script id="saved-data-loader">\n(function(){\n' +
+    'function d64(b){var b2=atob(b),a=new Uint8Array(b2.length);for(var i=0;i<b2.length;i++)a[i]=b2.charCodeAt(i);return new TextDecoder("utf-8").decode(a);}\n' +
+    'var data=JSON.parse(d64(document.getElementById("saved-data-b64").textContent.trim()));\n' +
+    'function restore(){\n' +
+    'var inputs=document.querySelectorAll("input:not([type=file]),textarea,select");\n' +
+    'var fi=0;\n' +
+    'inputs.forEach(function(el){\n' +
+    'var f=data.fields[fi++];if(!f)return;\n' +
+    'if(el.tagName==="TEXTAREA"){el.value=f.value;}\n' +
+    'else if(f.type==="radio"||f.type==="checkbox"){el.checked=f.checked;if(f.checked)el.setAttribute("checked","checked");}\n' +
+    'else{el.value=f.value;el.setAttribute("value",f.value);}\n' +
+    '});\n' +
+    'var container=document.getElementById("rooms-container");\n' +
+    'if(container&&data.visibleRooms){\n' +
+    'container.innerHTML="";\n' +
+    'data.visibleRooms.forEach(function(r){\n' +
+    'var d=document.createElement("div");d.innerHTML=r.html;\n' +
+    'container.appendChild(d.firstElementChild);\n' +
+    '});\n' +
+    '}\n' +
+    'if(data.photos){\n' +
+    'data.photos.forEach(function(p){\n' +
+    'var grid=document.getElementById(p.gridId);if(!grid)return;\n' +
+    'var thumb=document.createElement("div");thumb.className="photo-thumb";\n' +
+    'var img=document.createElement("img");img.src=p.src;img.alt="写真";img.dataset.base=p.base;\n' +
+    'if(p.shapes)img.dataset.shapes=p.shapes;\n' +
+    'var delBtn=document.createElement("button");delBtn.className="del-btn no-print";delBtn.textContent="x";\n' +
+    'delBtn.onclick=function(){thumb.remove();};\n' +
+    'var editBtn=document.createElement("button");editBtn.className="edit-btn no-print";editBtn.textContent="編集";\n' +
+    'editBtn.onclick=function(){openAnno(img);};\n' +
+    'var trimBtn=document.createElement("button");trimBtn.className="trim-btn no-print";trimBtn.textContent="トリミング";\n' +
+    'trimBtn.onclick=function(){openTrim(img);};\n' +
+    'thumb.appendChild(img);thumb.appendChild(delBtn);\n' +
+    'thumb.appendChild(editBtn);thumb.appendChild(trimBtn);\n' +
+    'grid.appendChild(thumb);\n' +
+    '});\n' +
+    '}\n' +
+    'if(data.deletedList&&data.deletedList.length>0){\n' +
+    'var bar=document.getElementById("restore-bar");\n' +
+    'var btns=document.getElementById("restore-btns");\n' +
+    'if(bar&&btns){\n' +
+    'btns.innerHTML="";\n' +
+    'bar.style.display="block";\n' +
+    'data.deletedList.forEach(function(item){\n' +
+    'var wrap=document.createElement("div");wrap.innerHTML=item.html;\n' +
+    'var el=wrap.firstElementChild;\n' +
+    'if(typeof deletedRooms!=="undefined")deletedRooms[item.id]={el:el,label:item.label};\n' +
+    'var btn=document.createElement("button");btn.className="restore-btn";btn.id="rb-"+item.id;\n' +
+    'btn.textContent="＋ "+item.label;\n' +
+    'btn.onclick=function(){restoreRoom(item.id);};\n' +
+    'btns.appendChild(btn);\n' +
+    '});\n' +
+    '}}\n' +
+    '}\n' +
+    'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",restore);}else{restore();}\n' +
+    '})();\n<\/script>';
+
+  var dataTag = '<script id="saved-data-b64" type="text/plain">' + dataB64 + '<\/script>';
+
+  // --- クリーンソースに動的タグを挿入して出力 ---
+  var outHtml = _stripDynamicTags(cleanSrc);
+  outHtml = outHtml.replace(/<\/body>/, dataTag + '\n' + loaderScript + '\n</body>');
+
+  var html = '<!DOCTYPE html>\n' + outHtml;
+  var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
   a.href = url; a.download = (filename || '家屋調査報告書') + '.html'; a.style.display = 'none';
   document.body.appendChild(a);
-  a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 3000);
+  a.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true, view:window}));
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 3000);
+
+  } catch(e) {
+    console.error('HTML保存エラー:', e);
+    alert('HTML保存に失敗しました。\n' + e.message);
+  } finally {
+    if(saveBtn){ saveBtn.disabled = false; saveBtn.textContent = origText; }
+  }
 }
 
 // ========== PDF保存 ==========
@@ -1355,6 +1504,7 @@ async function savePDF(filename) {
     };
     await addEl(document.querySelector('h1'));
     await addEl(document.querySelector('.header-info'));
+    await addEl(document.getElementById('facility-name'));
     await addEl(document.querySelector('.section'));
     for (const block of document.querySelectorAll('.room-block')) await addEl(block);
     await addEl(document.querySelector('.page>div:last-of-type'));
