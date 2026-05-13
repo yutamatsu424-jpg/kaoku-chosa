@@ -658,6 +658,32 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
 </div>
 
 <script>
+// ========== クリーンソースの早期キャプチャ ==========
+// このscriptタグが実行される時点ではローダーはまだ実行されていない。
+// DOMはサーバーから配信されたそのままの状態なので、
+// ここでouterHTMLを取得すれば確実にクリーンなソースが得られる。
+// ※ただしブラウザのDOM正規化が入るため完全一致はしない。
+//   後でfetch方式が成功すればそちらで上書きする。
+var _cleanSourceCache = null;
+(function(){
+  try {
+    var clone = document.documentElement.cloneNode(true);
+    // ローダー系タグ（保存済みHTMLを開いた場合に存在する）を除去
+    ['saved-data-loader','saved-data-b64'].forEach(function(id){
+      var el = clone.querySelector('#' + id);
+      if(el) el.remove();
+    });
+    // 復元バーのボタンをクリア（保存済みHTMLを開いた場合に存在する）
+    var btns = clone.querySelector('#restore-btns');
+    if(btns) btns.innerHTML = '';
+    var bar = clone.querySelector('#restore-bar');
+    if(bar) bar.style.display = 'none';
+    _cleanSourceCache = clone.outerHTML;
+  } catch(e) {
+    console.warn('早期クリーンソースキャプチャ失敗:', e);
+  }
+})();
+
 // ========== 削除・復元 ==========
 const deletedRooms = {};
 let customCount = 0;
@@ -1264,11 +1290,8 @@ function closeFilenameModal() { document.getElementById('filename-modal').classL
 //  fetchが失敗した場合（ネットワーク断・file://等）はフォールバックとして
 //  DOMクローン方式を使う（精度は劣るが一応動作する）。
 
-// アプリ本体の固定URL
+// アプリ本体の固定URL（fetchでクリーンソースを取得するため）
 var _APP_SOURCE_URL = 'https://yutamatsu424-jpg.github.io/kaoku-chosa/';
-
-// クリーンソースのキャッシュ（セッション中は再fetchしない）
-var _cleanSourceCache = null;
 
 function _b64encode(str){
   var bytes = new TextEncoder().encode(str);
@@ -1282,9 +1305,7 @@ function _b64decode(b64){
   for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
   return new TextDecoder('utf-8').decode(bytes);
 }
-
 function _stripDynamicTags(html){
-  // saved-data-loader・saved-data-b64 を除去（保存時に挿入した動的タグ）
   html = html.replace(/<script\s+id="saved-data-loader"[\s\S]*?<\/script>/gi, '');
   html = html.replace(/<script\s+id="saved-data-b64"[^>]*>[\s\S]*?<\/script>/gi, '');
   return html;
@@ -1292,32 +1313,31 @@ function _stripDynamicTags(html){
 
 // クリーンソースを取得する（async）
 // 優先順位：
-//   1. セッションキャッシュ済み → そのまま返す
-//   2. 固定URL(_APP_SOURCE_URL)からfetch → 常にクリーンなアプリ本体を取得
-//   3. フォールバック：DOMクローン方式（file://・オフライン時）
+//   1. fetch(固定URL)成功 → 最も確実なクリーンソース
+//   2. 早期キャプチャ済みDOMクローン（_cleanSourceCache）→ fetchが失敗した場合
+//   3. 再度DOMクローン作成（フォールバック）
 async function _getCleanSourceHtml(){
-  // --- 1. セッションキャッシュ済みなら即返す ---
-  if(_cleanSourceCache){
-    return _cleanSourceCache;
-  }
-
-  // --- 2. アプリ本体の固定URLからfetch ---
+  // --- 1. 固定URLからfetchを試みる ---
   if(location.protocol === 'https:' || location.protocol === 'http:'){
     try {
       var res = await fetch(_APP_SOURCE_URL, { cache: 'no-store' });
       if(res.ok){
         var src = await res.text();
-        // 動的タグを除去（万が一保存済みHTMLのURLが誤設定された場合の保険）
         src = _stripDynamicTags(src);
-        _cleanSourceCache = src; // セッションキャッシュに保存
+        _cleanSourceCache = src; // 成功したらキャッシュを上書き
         return src;
       }
     } catch(e){
-      console.warn('fetch from app URL failed, falling back to DOM clone:', e);
+      console.warn('fetch失敗、早期キャプチャを使用します:', e);
     }
   }
 
-  // --- 3. フォールバック：DOMクローン方式（file://・オフライン時） ---
+  // --- 2. 早期キャプチャ済みDOMクローンを使用 ---
+  if(_cleanSourceCache){
+    return _cleanSourceCache;
+  }
+
+  // --- 3. フォールバック：再度DOMクローン作成 ---
   var clone = document.documentElement.cloneNode(true);
   ['saved-data-loader','saved-data-b64'].forEach(function(id){
     var el = clone.querySelector('#'+id);
