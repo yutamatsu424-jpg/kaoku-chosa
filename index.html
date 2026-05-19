@@ -546,16 +546,16 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
 <div class="page">
   <h1>家　屋　調　査　報　告　書</h1>
   <div class="header-info">
-    <span>作成日：<input class="inline" type="text" placeholder="　年　月　日" data-hcid="hc_0"></span>
-    <span>作成者：<input class="inline" type="text" placeholder="氏名" data-hcid="hc_1"></span>
+    <span>作成日：<input class="inline" type="text" placeholder="　年　月　日"></span>
+    <span>作成者：<input class="inline" type="text" placeholder="氏名"></span>
   </div>
   <div id="facility-name" style="text-align:right;font-size:10pt;margin-bottom:14px;">ビハーラ光風通所リハビリテーション</div>
   <div class="section">
     <div class="section-title">■ 実施情報</div>
     <table>
-      <tr><th>利用者氏名</th><td><input class="cell" type="text" data-hcid="hc_2"></td></tr>
-      <tr><th>実施日</th><td><input class="cell" type="text" placeholder="　年　月　日" data-hcid="hc_3"></td></tr>
-      <tr><th>同席者</th><td><input class="cell" type="text" data-hcid="hc_4"></td></tr>
+      <tr><th>利用者氏名</th><td><input class="cell" type="text"></td></tr>
+      <tr><th>実施日</th><td><input class="cell" type="text" placeholder="　年　月　日"></td></tr>
+      <tr><th>同席者</th><td><input class="cell" type="text"></td></tr>
     </table>
   </div>
   <div class="section">
@@ -565,14 +565,14 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
       <div class="restore-btns" id="restore-btns"></div>
     </div>
     <div id="rooms-container">
-      <div class="room-block" id="room-0"><div class="room-block-title"><span class="room-title-text">１．玄関アプローチ</span><button class="room-del-btn no-print" onclick="deleteRoom('room-0','１．玄関アプローチ')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">段差高さ　A<input class="num" type="text" data-hcid="hc_5">cm　B<input class="num" type="text" data-hcid="hc_6">cm　C<input class="num" type="text" data-hcid="hc_7">cm</div><div class="dim-row">手すりの設置<span class="radio-group"><label><input type="radio" name="r0-te" value="あり" data-hcid="hc_8">あり</label><label><input type="radio" name="r0-te" value="なし" data-hcid="hc_9">なし</label></span></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox" data-hcid="hc_10">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_11"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox" data-hcid="hc_12">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_13"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-0"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-0').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-0').click()">📷 カメラ</button></div><input type="file" id="fg-room-0" accept="image/*" multiple onchange="loadPhotos(this,'room-0')"><input type="file" id="fc-room-0" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-0')"></div></div></div>
-      <div class="room-block" id="room-1"><div class="room-block-title"><span class="room-title-text">２．玄関</span><button class="room-del-btn no-print" onclick="deleteRoom('room-1','２．玄関')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">玄関入り口の段差<input class="num" type="text" data-hcid="hc_14">cm</div><div class="dim-row">上がり框の高さ<input class="num" type="text" data-hcid="hc_15">cm</div><div class="dim-row">手すりの設置<span class="radio-group"><label><input type="radio" name="r1-te" value="あり" data-hcid="hc_16">あり</label><label><input type="radio" name="r1-te" value="なし" data-hcid="hc_17">なし</label></span></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox" data-hcid="hc_18">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_19"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox" data-hcid="hc_20">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_21"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-1"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-1').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-1').click()">📷 カメラ</button></div><input type="file" id="fg-room-1" accept="image/*" multiple onchange="loadPhotos(this,'room-1')"><input type="file" id="fc-room-1" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-1')"></div></div></div>
-      <div class="room-block" id="room-2"><div class="room-block-title"><span class="room-title-text">３．居間</span><button class="room-del-btn no-print" onclick="deleteRoom('room-2','３．居間')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text" data-hcid="hc_22">cm</div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox" data-hcid="hc_23">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_24"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox" data-hcid="hc_25">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_26"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-2"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-2').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-2').click()">📷 カメラ</button></div><input type="file" id="fg-room-2" accept="image/*" multiple onchange="loadPhotos(this,'room-2')"><input type="file" id="fc-room-2" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-2')"></div></div></div>
-      <div class="room-block" id="room-3"><div class="room-block-title"><span class="room-title-text">４．台所</span><button class="room-del-btn no-print" onclick="deleteRoom('room-3','４．台所')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text" data-hcid="hc_27">cm</div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox" data-hcid="hc_28">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_29"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox" data-hcid="hc_30">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_31"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-3"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-3').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-3').click()">📷 カメラ</button></div><input type="file" id="fg-room-3" accept="image/*" multiple onchange="loadPhotos(this,'room-3')"><input type="file" id="fc-room-3" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-3')"></div></div></div>
-      <div class="room-block" id="room-4"><div class="room-block-title"><span class="room-title-text">５．居室</span><button class="room-del-btn no-print" onclick="deleteRoom('room-4','５．居室')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text" data-hcid="hc_32">cm</div><div class="dim-row">ベッドの設置<span class="radio-group"><label><input type="radio" name="r4-bed" value="あり" data-hcid="hc_33">あり</label><label><input type="radio" name="r4-bed" value="なし" data-hcid="hc_34">なし</label></span></div><div class="dim-row">ベッドの高さ<input class="num" type="text" data-hcid="hc_35">cm</div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox" data-hcid="hc_36">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_37"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox" data-hcid="hc_38">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_39"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-4"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-4').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-4').click()">📷 カメラ</button></div><input type="file" id="fg-room-4" accept="image/*" multiple onchange="loadPhotos(this,'room-4')"><input type="file" id="fc-room-4" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-4')"></div></div></div>
-      <div class="room-block" id="room-5"><div class="room-block-title"><span class="room-title-text">６．トイレ</span><button class="room-del-btn no-print" onclick="deleteRoom('room-5','６．トイレ')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text" data-hcid="hc_40">cm</div><div class="dim-row">座面の高さ<input class="num" type="text" data-hcid="hc_41">cm</div><div class="dim-row">トイレ先端から入口までの距離<input class="num" type="text" data-hcid="hc_42">cm</div><div class="dim-row">トイレ中央から壁までの距離（横幅）<input class="num" type="text" data-hcid="hc_43">cm</div><div class="dim-row">手すりの設置<span class="radio-group"><label><input type="radio" name="r5-te" value="あり" data-hcid="hc_44">あり</label><label><input type="radio" name="r5-te" value="なし" data-hcid="hc_45">なし</label></span></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox" data-hcid="hc_46">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_47"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox" data-hcid="hc_48">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_49"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-5"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-5').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-5').click()">📷 カメラ</button></div><input type="file" id="fg-room-5" accept="image/*" multiple onchange="loadPhotos(this,'room-5')"><input type="file" id="fc-room-5" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-5')"></div></div></div>
-      <div class="room-block" id="room-6"><div class="room-block-title"><span class="room-title-text">７．脱衣場</span><button class="room-del-btn no-print" onclick="deleteRoom('room-6','７．脱衣場')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text" data-hcid="hc_50">cm</div><div class="dim-row">椅子の設置<span class="radio-group"><label><input type="radio" name="r6-ch" value="あり" data-hcid="hc_51">あり</label><label><input type="radio" name="r6-ch" value="なし" data-hcid="hc_52">なし</label></span></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox" data-hcid="hc_53">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_54"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox" data-hcid="hc_55">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_56"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-6"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-6').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-6').click()">📷 カメラ</button></div><input type="file" id="fg-room-6" accept="image/*" multiple onchange="loadPhotos(this,'room-6')"><input type="file" id="fc-room-6" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-6')"></div></div></div>
-      <div class="room-block" id="room-7"><div class="room-block-title"><span class="room-title-text">８．浴室</span><button class="room-del-btn no-print" onclick="deleteRoom('room-7','８．浴室')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text" data-hcid="hc_57">cm</div><div class="dim-row">床からの浴槽縁までの高さ<input class="num" type="text" data-hcid="hc_58">cm</div><div class="dim-row">浴槽の深さ<input class="num" type="text" data-hcid="hc_59">cm</div><div class="dim-row">浴槽の縦幅<input class="num" type="text" data-hcid="hc_60">cm　浴槽縁の幅（縦）<input class="num" type="text" data-hcid="hc_61">cm</div><div class="dim-row">浴槽の横幅<input class="num" type="text" data-hcid="hc_62">cm　浴槽縁の幅（横）<input class="num" type="text" data-hcid="hc_63">cm</div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox" data-hcid="hc_64">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_65"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox" data-hcid="hc_66">特にありません</label><textarea class="note-ta" placeholder="自由記載" data-hcid="hc_67"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-7"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-7').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-7').click()">📷 カメラ</button></div><input type="file" id="fg-room-7" accept="image/*" multiple onchange="loadPhotos(this,'room-7')"><input type="file" id="fc-room-7" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-7')"></div></div></div>
+      <div class="room-block" id="room-0"><div class="room-block-title"><span class="room-title-text">１．玄関アプローチ</span><button class="room-del-btn no-print" onclick="deleteRoom('room-0','１．玄関アプローチ')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">段差高さ　A<input class="num" type="text">cm　B<input class="num" type="text">cm　C<input class="num" type="text">cm</div><div class="dim-row">手すりの設置<span class="radio-group"><label><input type="radio" name="r0-te" value="あり">あり</label><label><input type="radio" name="r0-te" value="なし">なし</label></span></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-0"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-0').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-0').click()">📷 カメラ</button></div><input type="file" id="fg-room-0" accept="image/*" multiple onchange="loadPhotos(this,'room-0')"><input type="file" id="fc-room-0" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-0')"></div></div></div>
+      <div class="room-block" id="room-1"><div class="room-block-title"><span class="room-title-text">２．玄関</span><button class="room-del-btn no-print" onclick="deleteRoom('room-1','２．玄関')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">玄関入り口の段差<input class="num" type="text">cm</div><div class="dim-row">上がり框の高さ<input class="num" type="text">cm</div><div class="dim-row">手すりの設置<span class="radio-group"><label><input type="radio" name="r1-te" value="あり">あり</label><label><input type="radio" name="r1-te" value="なし">なし</label></span></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-1"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-1').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-1').click()">📷 カメラ</button></div><input type="file" id="fg-room-1" accept="image/*" multiple onchange="loadPhotos(this,'room-1')"><input type="file" id="fc-room-1" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-1')"></div></div></div>
+      <div class="room-block" id="room-2"><div class="room-block-title"><span class="room-title-text">３．居間</span><button class="room-del-btn no-print" onclick="deleteRoom('room-2','３．居間')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text">cm</div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-2"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-2').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-2').click()">📷 カメラ</button></div><input type="file" id="fg-room-2" accept="image/*" multiple onchange="loadPhotos(this,'room-2')"><input type="file" id="fc-room-2" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-2')"></div></div></div>
+      <div class="room-block" id="room-3"><div class="room-block-title"><span class="room-title-text">４．台所</span><button class="room-del-btn no-print" onclick="deleteRoom('room-3','４．台所')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text">cm</div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-3"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-3').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-3').click()">📷 カメラ</button></div><input type="file" id="fg-room-3" accept="image/*" multiple onchange="loadPhotos(this,'room-3')"><input type="file" id="fc-room-3" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-3')"></div></div></div>
+      <div class="room-block" id="room-4"><div class="room-block-title"><span class="room-title-text">５．居室</span><button class="room-del-btn no-print" onclick="deleteRoom('room-4','５．居室')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text">cm</div><div class="dim-row">ベッドの設置<span class="radio-group"><label><input type="radio" name="r4-bed" value="あり">あり</label><label><input type="radio" name="r4-bed" value="なし">なし</label></span></div><div class="dim-row">ベッドの高さ<input class="num" type="text">cm</div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-4"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-4').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-4').click()">📷 カメラ</button></div><input type="file" id="fg-room-4" accept="image/*" multiple onchange="loadPhotos(this,'room-4')"><input type="file" id="fc-room-4" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-4')"></div></div></div>
+      <div class="room-block" id="room-5"><div class="room-block-title"><span class="room-title-text">６．トイレ</span><button class="room-del-btn no-print" onclick="deleteRoom('room-5','６．トイレ')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text">cm</div><div class="dim-row">座面の高さ<input class="num" type="text">cm</div><div class="dim-row">トイレ先端から入口までの距離<input class="num" type="text">cm</div><div class="dim-row">トイレ中央から壁までの距離（横幅）<input class="num" type="text">cm</div><div class="dim-row">手すりの設置<span class="radio-group"><label><input type="radio" name="r5-te" value="あり">あり</label><label><input type="radio" name="r5-te" value="なし">なし</label></span></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-5"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-5').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-5').click()">📷 カメラ</button></div><input type="file" id="fg-room-5" accept="image/*" multiple onchange="loadPhotos(this,'room-5')"><input type="file" id="fc-room-5" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-5')"></div></div></div>
+      <div class="room-block" id="room-6"><div class="room-block-title"><span class="room-title-text">７．脱衣場</span><button class="room-del-btn no-print" onclick="deleteRoom('room-6','７．脱衣場')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text">cm</div><div class="dim-row">椅子の設置<span class="radio-group"><label><input type="radio" name="r6-ch" value="あり">あり</label><label><input type="radio" name="r6-ch" value="なし">なし</label></span></div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-6"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-6').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-6').click()">📷 カメラ</button></div><input type="file" id="fg-room-6" accept="image/*" multiple onchange="loadPhotos(this,'room-6')"><input type="file" id="fc-room-6" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-6')"></div></div></div>
+      <div class="room-block" id="room-7"><div class="room-block-title"><span class="room-title-text">８．浴室</span><button class="room-del-btn no-print" onclick="deleteRoom('room-7','８．浴室')">×</button></div><div class="room-inner"><div class="room-left"><div class="dim-block"><div class="room-sub">📐 寸法・状況</div><div class="dim-row">入口の段差<input class="num" type="text">cm</div><div class="dim-row">床からの浴槽縁までの高さ<input class="num" type="text">cm</div><div class="dim-row">浴槽の深さ<input class="num" type="text">cm</div><div class="dim-row">浴槽の縦幅<input class="num" type="text">cm　浴槽縁の幅（縦）<input class="num" type="text">cm</div><div class="dim-row">浴槽の横幅<input class="num" type="text">cm　浴槽縁の幅（横）<input class="num" type="text">cm</div></div><div class="notes-block"><div class="notes-label">問題点・特記事項</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div><div class="notes-block"><div class="notes-label">改修・用具の提案</div><label class="none-check"><input type="checkbox">特にありません</label><textarea class="note-ta" placeholder="自由記載"></textarea></div></div><div class="room-right"><div class="room-sub">📷 写真</div><div class="photo-grid" id="pg-room-7"></div><div class="photo-btn-group no-print"><button class="add-photo-btn btn-gallery" onclick="document.getElementById('fg-room-7').click()">🖼️ ギャラリー</button><button class="add-photo-btn btn-camera" onclick="document.getElementById('fc-room-7').click()">📷 カメラ</button></div><input type="file" id="fg-room-7" accept="image/*" multiple onchange="loadPhotos(this,'room-7')"><input type="file" id="fc-room-7" accept="image/*" capture="environment" onchange="loadPhotos(this,'room-7')"></div></div></div>
     </div>
     <button class="add-room-btn no-print" onclick="addCustomRoom()">＋ その他の項目を追加</button>
   </div>
@@ -592,11 +592,11 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
     <button class="tool-btn" id="tool-pen"    onclick="setAnnoTool('pen')">✏️ ペン</button>
     <button class="tool-btn" id="tool-text"   onclick="setAnnoTool('text')">T テキスト</button>
     <button class="tool-btn" id="tool-chair"  onclick="setAnnoTool('chair')">🪑 椅子</button>
-    <input type="number" id="font-size" value="24" min="10" max="72" style="width:48px;padding:3px;border:1px solid #aaa;border-radius:4px;font-size:10pt;text-align:center;" data-hcid="hc_68">
+    <input type="number" id="font-size" value="24" min="10" max="72" style="width:48px;padding:3px;border:1px solid #aaa;border-radius:4px;font-size:10pt;text-align:center;">
     <span style="color:#fff;font-size:9pt;">文字サイズ</span>
     <span id="chair-size-wrap" style="display:flex;align-items:center;gap:4px;">
       <span style="color:#fff;font-size:9pt;">🪑サイズ：</span>
-      <input type="range" id="chair-size-slider" min="5" max="60" value="18" style="width:80px;" data-hcid="hc_69">
+      <input type="range" id="chair-size-slider" min="5" max="60" value="18" style="width:80px;">
       <span id="chair-size-val" style="color:#fff;font-size:9pt;">18</span>
     </span>
     <div style="display:flex;gap:5px;align-items:center;">
@@ -615,7 +615,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
     <!-- テキスト入力UI：canvas-wrapの子でposition:absolute -->
     <div id="anno-text-ui">
       <div class="tui-title">テキストを入力</div>
-      <input id="anno-text-inp" type="text" placeholder="テキスト入力" data-hcid="hc_70">
+      <input id="anno-text-inp" type="text" placeholder="テキスト入力">
       <div class="tui-btns">
         <button id="anno-text-cancel">キャンセル</button>
         <button id="anno-text-ok">✔ 完了</button>
@@ -643,7 +643,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
 <div id="filename-modal">
   <div class="filename-box">
     <h3 id="fn-title">ファイル名を入力</h3>
-    <input type="text" id="fn-input" placeholder="例：山田太郎_家屋調査" data-hcid="hc_71">
+    <input type="text" id="fn-input" placeholder="例：山田太郎_家屋調査">
     <div class="filename-btns">
       <button class="fn-cancel" onclick="closeFilenameModal()">キャンセル</button>
       <button class="fn-ok" id="fn-ok-btn">保存</button>
@@ -658,54 +658,30 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
 </div>
 
 <script>
-// ========== クリーンソースの早期キャプチャ ==========
-// このscriptタグが実行される時点ではローダーはまだ実行されていない。
-// DOMはサーバーから配信されたそのままの状態なので、
-// ここでouterHTMLを取得すれば確実にクリーンなソースが得られる。
-// ※ただしブラウザのDOM正規化が入るため完全一致はしない。
-//   後でfetch方式が成功すればそちらで上書きする。
-var _cleanSourceCache = null;
-(function(){
+// ========== クリーンDOM早期キャプチャ ==========
+// この時点ではローダー未実行 → DOMはクリーン（値なし・写真なし）
+// ここでouterHTMLを取得しておけば、再保存時にも確実にクリーンソースが使える
+var _earlyCleanHtml = (function(){
   try {
-    var clone = document.documentElement.cloneNode(true);
-    // ローダー系タグ（保存済みHTMLを開いた場合に存在する）を除去
-    ['saved-data-loader','saved-data-b64','__room-stash'].forEach(function(id){
-      var el = clone.querySelector('#' + id);
-      if(el) el.remove();
+    var c = document.documentElement.cloneNode(true);
+    ['saved-data-loader','original-source','saved-data-b64'].forEach(function(id){
+      var el = c.querySelector('#'+id); if(el) el.remove();
     });
-    // 復元バーのボタンをクリア（保存済みHTMLを開いた場合に存在する）
-    var btns = clone.querySelector('#restore-btns');
-    if(btns) btns.innerHTML = '';
-    var bar = clone.querySelector('#restore-bar');
-    if(bar) bar.style.display = 'none';
-    _cleanSourceCache = clone.outerHTML;
-  } catch(e) {
-    console.warn('早期クリーンソースキャプチャ失敗:', e);
-  }
+    var rb = c.querySelector('#restore-btns'); if(rb) rb.innerHTML = '';
+    var bar = c.querySelector('#restore-bar'); if(bar) bar.style.display = 'none';
+    return c.outerHTML;
+  } catch(e){ return null; }
 })();
 
 // ========== 削除・復元 ==========
 const deletedRooms = {};
 let customCount = 0;
 
-// 削除済み部屋の非表示保管場所（DOMに残したまま管理）
-function _getRoomStash() {
-  var s = document.getElementById('__room-stash');
-  if (!s) {
-    s = document.createElement('div');
-    s.id = '__room-stash';
-    s.style.display = 'none';
-    document.body.appendChild(s);
-  }
-  return s;
-}
-
 function deleteRoom(id, label) {
   const block = document.getElementById(id);
   if (!block) return;
   deletedRooms[id] = { el: block, label };
-  // DOMから完全削除せず、非表示スタッシュに移動（復元時に再利用できる）
-  _getRoomStash().appendChild(block);
+  block.remove();
   document.getElementById('restore-bar').style.display = 'block';
   const btn = document.createElement('button');
   btn.className = 'restore-btn'; btn.id = 'rb-' + id; btn.textContent = '＋ ' + label;
@@ -1291,20 +1267,22 @@ function openFilenameModal(mode) {
 function closeFilenameModal() { document.getElementById('filename-modal').classList.remove('open'); }
 
 // ========== HTML保存 ==========
-// 方式（v3）：
-//  クリーンソースは「アプリ本体の固定URL」から毎回fetchして取得する。
-//  保存済みHTMLからfetchすると「データ入りHTML」を取得してしまうため、
-//  固定URLを使うことで、どのHTML（アプリ本体・保存済み）を開いていても
-//  常にクリーンなアプリ本体を取得できる。
-//
-//  固定URL取得に成功したらキャッシュ（_cleanSourceCache）に保持し、
-//  2回目以降はfetchしない。
-//
-//  fetchが失敗した場合（ネットワーク断・file://等）はフォールバックとして
-//  DOMクローン方式を使う（精度は劣るが一応動作する）。
+// 方式：
+//  1. 保存時、部屋ブロックのouterHTMLから写真を除去した「構造HTML」を保存する。
+//     写真は photos 配列に別途保存する。これにより写真の二重化を防ぐ。
+//  2. 初回保存時にDOMのouterHTMLから動的タグを除去した「クリーンソース」を
+//     <script id="original-source" type="text/plain"> にBase64で埋め込む。
+//  3. 再保存時はそのBase64をデコードして常にクリーンなHTMLをベースにする。
+//     → 何度保存→開く→修正→再保存してもHTMLが劣化しない。
 
-// アプリ本体の固定URL（fetchでクリーンソースを取得するため）
-var _APP_SOURCE_URL = 'https://yutamatsu424-jpg.github.io/kaoku-chosa/';
+// ページ読み込み時にBase64テンプレートを取得
+let _originalSourceB64 = null;
+(function(){
+  var srcEl = document.getElementById('original-source');
+  if(srcEl && srcEl.textContent.trim()){
+    _originalSourceB64 = srcEl.textContent.trim();
+  }
+})();
 
 function _b64encode(str){
   var bytes = new TextEncoder().encode(str);
@@ -1318,43 +1296,27 @@ function _b64decode(b64){
   for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
   return new TextDecoder('utf-8').decode(bytes);
 }
+
 function _stripDynamicTags(html){
+  // saved-data-loader, original-source, saved-data-b64 を除去
   html = html.replace(/<script\s+id="saved-data-loader"[\s\S]*?<\/script>/gi, '');
+  html = html.replace(/<script\s+id="original-source"[^>]*>[\s\S]*?<\/script>/gi, '');
   html = html.replace(/<script\s+id="saved-data-b64"[^>]*>[\s\S]*?<\/script>/gi, '');
-  // 非表示スタッシュ（削除済み部屋の保管場所）を除去
-  html = html.replace(/<div\s+id="__room-stash"[\s\S]*?<\/div>/gi, '');
   return html;
 }
 
-// クリーンソースを取得する（async）
-// 優先順位：
-//   1. fetch(固定URL)成功 → 最も確実なクリーンソース
-//   2. 早期キャプチャ済みDOMクローン（_cleanSourceCache）→ fetchが失敗した場合
-//   3. 再度DOMクローン作成（フォールバック）
-async function _getCleanSourceHtml(){
-  // --- 1. 固定URLからfetchを試みる ---
-  if(location.protocol === 'https:' || location.protocol === 'http:'){
-    try {
-      var res = await fetch(_APP_SOURCE_URL, { cache: 'no-store' });
-      if(res.ok){
-        var src = await res.text();
-        src = _stripDynamicTags(src);
-        _cleanSourceCache = src; // 成功したらキャッシュを上書き
-        return src;
-      }
-    } catch(e){
-      console.warn('fetch失敗、早期キャプチャを使用します:', e);
-    }
+function _getCleanSourceHtml(){
+  // 1. original-sourceタグのBase64（保存済みHTMLを開いた場合）
+  if(_originalSourceB64){
+    try { return _b64decode(_originalSourceB64); } catch(e){ console.error(e); }
   }
-
-  // --- 2. 早期キャプチャ済みDOMクローンを使用 ---
-  if(_cleanSourceCache){
-    return _cleanSourceCache;
+  // 2. 早期キャプチャ（ローダー実行前のクリーンDOM）
+  if(_earlyCleanHtml){
+    return _earlyCleanHtml;
   }
-
-  // --- 3. フォールバック：再度DOMクローン作成 ---
+  // 3. フォールバック：現在のDOMクローン
   var clone = document.documentElement.cloneNode(true);
-  ['saved-data-loader','saved-data-b64','__room-stash'].forEach(function(id){
+  ['saved-data-loader','original-source','saved-data-b64'].forEach(function(id){
     var el = clone.querySelector('#'+id);
     if(el) el.remove();
   });
@@ -1373,105 +1335,117 @@ function _getRoomHtmlWithoutPhotos(block){
   return clone.outerHTML;
 }
 
-async function downloadHTML(filename) {
-  var saveBtn = document.querySelector('.btn-save');
-  var origText = saveBtn ? saveBtn.textContent : '';
-  if(saveBtn){ saveBtn.disabled = true; saveBtn.textContent = '保存中...'; }
-
-  try {
-
-  // --- フィールド値をdata-hcidで保存 ---
-  var fields = {};
-  document.querySelectorAll('[data-hcid]').forEach(function(el){
-    var id = el.getAttribute('data-hcid');
-    if(el.type === 'radio' || el.type === 'checkbox'){
-      fields[id] = { checked: el.checked };
+function downloadHTML(filename) {
+  // --- 入力値を収集 ---
+  var fields = [];
+  document.querySelectorAll('input:not([type=file]), textarea, select').forEach(function(el){
+    if(el.tagName==='TEXTAREA'){
+      fields.push({tag:'textarea', id:el.id, name:el.name, value:el.value});
     } else {
-      fields[id] = { value: el.value };
+      fields.push({tag:'input', id:el.id, name:el.name, type:el.type, value:el.value, checked:el.checked});
     }
   });
 
-  // --- 表示中の部屋IDリスト ---
-  var visibleRoomIds = Array.from(document.querySelectorAll('#rooms-container > .room-block')).map(function(b){ return b.id; });
-
-  // --- 削除済み部屋 ---
-  var deletedList = Object.keys(deletedRooms).map(function(id){
-    return { id: id, label: deletedRooms[id].label };
-  });
-
-  // --- 写真 ---
+  // --- 写真を収集（部屋とは別に管理） ---
   var photos = [];
   document.querySelectorAll('.photo-thumb').forEach(function(thumb){
     var img = thumb.querySelector('img');
     var grid = thumb.closest('.photo-grid');
     if(img && grid){
-      photos.push({ gridId: grid.id, src: img.src, base: img.dataset.base || img.src, shapes: img.dataset.shapes || '' });
+      photos.push({
+        gridId: grid.id,
+        src: img.src,
+        base: img.dataset.base || img.src,
+        shapes: img.dataset.shapes || ''
+      });
     }
   });
 
-  var saveData = { fields: fields, visibleRoomIds: visibleRoomIds, deletedList: deletedList, photos: photos };
+  // --- 部屋ブロック（写真を除外した構造のみ）を収集 ---
+  var visibleRooms = Array.from(document.querySelectorAll('#rooms-container > .room-block')).map(function(b){
+    return { id: b.id, html: _getRoomHtmlWithoutPhotos(b) };
+  });
 
-  var cleanSrc = await _getCleanSourceHtml();
+  var deletedList = Object.entries(deletedRooms).map(function(entry){
+    return { id: entry[0], label: entry[1].label, html: _getRoomHtmlWithoutPhotos(entry[1].el) };
+  });
+
+  var saveData = { fields: fields, photos: photos, visibleRooms: visibleRooms, deletedList: deletedList };
+
+  // --- クリーンソースを取得 ---
+  var cleanSrc = _getCleanSourceHtml();
+  var srcB64 = _originalSourceB64 || _b64encode(cleanSrc);
+  _originalSourceB64 = srcB64;
+
+  // --- 保存データをBase64エンコード（JSONエスケープ問題を完全回避） ---
   var dataB64 = _b64encode(JSON.stringify(saveData));
 
+  // --- ローダースクリプト（データはBase64デコードして読み込む） ---
   var loaderScript = '<script id="saved-data-loader">\n(function(){\n' +
     'function d64(b){var b2=atob(b),a=new Uint8Array(b2.length);for(var i=0;i<b2.length;i++)a[i]=b2.charCodeAt(i);return new TextDecoder("utf-8").decode(a);}\n' +
     'var data=JSON.parse(d64(document.getElementById("saved-data-b64").textContent.trim()));\n' +
     'function restore(){\n' +
-    '  var container=document.getElementById("rooms-container");\n' +
-    '  if(container&&data.visibleRoomIds){\n' +
-    '    var all=Array.from(document.querySelectorAll(".room-block"));\n' +
-    '    all.forEach(function(r){r.remove();});\n' +
-    '    data.visibleRoomIds.forEach(function(id){\n' +
-    '      var r=all.find(function(x){return x.id===id;});\n' +
-    '      if(r)container.appendChild(r);\n' +
-    '    });\n' +
-    '  }\n' +
-    '  if(data.fields){\n' +
-    '    document.querySelectorAll("[data-hcid]").forEach(function(el){\n' +
-    '      var f=data.fields[el.getAttribute("data-hcid")];if(!f)return;\n' +
-    '      if(el.type==="radio"||el.type==="checkbox"){el.checked=!!f.checked;}\n' +
-    '      else if(typeof f.value!=="undefined"){el.value=f.value;}\n' +
-    '    });\n' +
-    '  }\n' +
-    '  if(data.deletedList&&data.deletedList.length>0){\n' +
-    '    var bar=document.getElementById("restore-bar");\n' +
-    '    var btns=document.getElementById("restore-btns");\n' +
-    '    if(bar&&btns){bar.style.display="block";\n' +
-    '      data.deletedList.forEach(function(item){\n' +
-    '        var el=document.getElementById(item.id);if(!el)return;\n' +
-    '        if(typeof deletedRooms!=="undefined")deletedRooms[item.id]={el:el,label:item.label};\n' +
-    '        var btn=document.createElement("button");btn.className="restore-btn";btn.id="rb-"+item.id;\n' +
-    '        btn.textContent="＋ "+item.label;\n' +
-    '        btn.onclick=function(){restoreRoom(item.id);};\n' +
-    '        btns.appendChild(btn);\n' +
-    '      });\n' +
-    '    }\n' +
-    '  }\n' +
-    '  if(data.photos){\n' +
-    '    data.photos.forEach(function(p){\n' +
-    '      var grid=document.getElementById(p.gridId);if(!grid)return;\n' +
-    '      var thumb=document.createElement("div");thumb.className="photo-thumb";\n' +
-    '      var img=document.createElement("img");img.src=p.src;img.alt="写真";img.dataset.base=p.base;\n' +
-    '      if(p.shapes)img.dataset.shapes=p.shapes;\n' +
-    '      var delBtn=document.createElement("button");delBtn.className="del-btn no-print";delBtn.textContent="x";\n' +
-    '      delBtn.onclick=function(){thumb.remove();};\n' +
-    '      var editBtn=document.createElement("button");editBtn.className="edit-btn no-print";editBtn.textContent="編集";\n' +
-    '      editBtn.onclick=function(){openAnno(img);};\n' +
-    '      var trimBtn=document.createElement("button");trimBtn.className="trim-btn no-print";trimBtn.textContent="トリミング";\n' +
-    '      trimBtn.onclick=function(){openTrim(img);};\n' +
-    '      thumb.appendChild(img);thumb.appendChild(delBtn);thumb.appendChild(editBtn);thumb.appendChild(trimBtn);\n' +
-    '      grid.appendChild(thumb);\n' +
-    '    });\n' +
-    '  }\n' +
+    'var container=document.getElementById("rooms-container");\n' +
+    'if(container&&data.visibleRooms){\n' +
+    'container.innerHTML="";\n' +
+    'data.visibleRooms.forEach(function(r){\n' +
+    'var d=document.createElement("div");d.innerHTML=r.html;\n' +
+    'container.appendChild(d.firstElementChild);\n' +
+    '});\n' +
+    '}\n' +
+    'var inputs=document.querySelectorAll("input:not([type=file]),textarea,select");\n' +
+    'var fi=0;\n' +
+    'inputs.forEach(function(el){\n' +
+    'var f=data.fields[fi++];if(!f)return;\n' +
+    'if(el.tagName==="TEXTAREA"){el.value=f.value;}\n' +
+    'else if(f.type==="radio"||f.type==="checkbox"){el.checked=f.checked;}\n' +
+    'else{el.value=f.value;}\n' +
+    '});\n' +
+    'if(data.photos){\n' +
+    'data.photos.forEach(function(p){\n' +
+    'var grid=document.getElementById(p.gridId);if(!grid)return;\n' +
+    'var thumb=document.createElement("div");thumb.className="photo-thumb";\n' +
+    'var img=document.createElement("img");img.src=p.src;img.alt="写真";img.dataset.base=p.base;\n' +
+    'if(p.shapes)img.dataset.shapes=p.shapes;\n' +
+    'var delBtn=document.createElement("button");delBtn.className="del-btn no-print";delBtn.textContent="x";\n' +
+    'delBtn.onclick=function(){thumb.remove();};\n' +
+    'var editBtn=document.createElement("button");editBtn.className="edit-btn no-print";editBtn.textContent="編集";\n' +
+    'editBtn.onclick=function(){openAnno(img);};\n' +
+    'var trimBtn=document.createElement("button");trimBtn.className="trim-btn no-print";trimBtn.textContent="トリミング";\n' +
+    'trimBtn.onclick=function(){openTrim(img);};\n' +
+    'thumb.appendChild(img);thumb.appendChild(delBtn);\n' +
+    'thumb.appendChild(editBtn);thumb.appendChild(trimBtn);\n' +
+    'grid.appendChild(thumb);\n' +
+    '});\n' +
+    '}\n' +
+    'if(data.deletedList&&data.deletedList.length>0){\n' +
+    'var bar=document.getElementById("restore-bar");\n' +
+    'var btns=document.getElementById("restore-btns");\n' +
+    'if(bar&&btns){\n' +
+    'btns.innerHTML="";\n' +
+    'bar.style.display="block";\n' +
+    'data.deletedList.forEach(function(item){\n' +
+    'var wrap=document.createElement("div");wrap.innerHTML=item.html;\n' +
+    'var el=wrap.firstElementChild;\n' +
+    'if(typeof deletedRooms!=="undefined")deletedRooms[item.id]={el:el,label:item.label};\n' +
+    'var btn=document.createElement("button");btn.className="restore-btn";btn.id="rb-"+item.id;\n' +
+    'btn.textContent="＋ "+item.label;\n' +
+    'btn.onclick=function(){restoreRoom(item.id);};\n' +
+    'btns.appendChild(btn);\n' +
+    '});\n' +
+    '}}\n' +
     '}\n' +
     'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",restore);}else{restore();}\n' +
     '})();\n<\/script>';
 
   var dataTag = '<script id="saved-data-b64" type="text/plain">' + dataB64 + '<\/script>';
+  var sourceTag = '<script id="original-source" type="text/plain">' + srcB64 + '<\/script>';
 
+  // --- クリーンソースに挿入して出力 ---
   var outHtml = _stripDynamicTags(cleanSrc);
-  outHtml = outHtml.replace(/<\/body>/, dataTag + '\n' + loaderScript + '\n</body>');
+  // saved-data-b64 タグも除去（念のため）
+  outHtml = outHtml.replace(/<script\s+id="saved-data-b64"[^>]*>[\s\S]*?<\/script>/gi, '');
+  outHtml = outHtml.replace(/<\/body>/, sourceTag + '\n' + dataTag + '\n' + loaderScript + '\n</body>');
 
   var html = '<!DOCTYPE html>\n' + outHtml;
   var blob = new Blob([html], {type:'text/html;charset=utf-8'});
@@ -1481,13 +1455,6 @@ async function downloadHTML(filename) {
   document.body.appendChild(a);
   a.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true, view:window}));
   setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 3000);
-
-  } catch(e) {
-    console.error('HTML保存エラー:', e);
-    alert('HTML保存に失敗しました。\n' + e.message);
-  } finally {
-    if(saveBtn){ saveBtn.disabled = false; saveBtn.textContent = origText; }
-  }
 }
 
 // ========== PDF保存 ==========
@@ -1531,7 +1498,8 @@ async function savePDF(filename) {
     await addEl(document.querySelector('.page>div:last-of-type'));
     pdf.save((filename || '家屋調査報告書') + '.pdf');
   } catch (e) {
-    alert('PDF生成に失敗しました。');
+    console.error('PDF生成エラー:', e);
+    alert('PDF生成に失敗しました。\n' + (e.message || e));
   } finally {
     page.setAttribute('style', origStyle);
     saved.forEach(({ el, style }) => el.setAttribute('style', style));
