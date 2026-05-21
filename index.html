@@ -36,7 +36,7 @@ input.num:focus { background:#f0f7ff; }
 .notes-label { font-size:9.5pt; font-weight:bold; color:#444; margin-bottom:4px; }
 .none-check { display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:10pt; cursor:pointer; }
 .none-check input[type=checkbox] { width:16px; height:16px; cursor:pointer; }
-textarea.note-ta { width:100%; border:1px solid #ccc; border-radius:3px; font-size:10pt; font-family:inherit; padding:4px 6px; resize:vertical; min-height:50px; outline:none; }
+textarea.note-ta { width:100%; border:1px solid #ccc; border-radius:3px; font-size:10pt; font-family:inherit; padding:4px 6px; resize:vertical; min-height:50px; outline:none; overflow-wrap:break-word; word-wrap:break-word; }
 textarea.note-ta:focus { background:#f0f7ff; }
 .room-block { border:1px solid #aac; border-radius:4px; margin-bottom:12px; overflow:hidden; }
 .room-block-title { background:#4a7fa8; color:#fff; padding:6px 10px; font-size:10.5pt; font-weight:bold; display:flex; justify-content:space-between; align-items:center; gap:6px; }
@@ -1440,6 +1440,7 @@ function downloadHTML(filename) {
     'btns.appendChild(btn);\n' +
     '});\n' +
     '}}\n' +
+    'var mc=0;data.visibleRooms.concat(data.deletedList||[]).forEach(function(r){var m=r.id.match(/^custom-(\\d+)$/);if(m)mc=Math.max(mc,parseInt(m[1]));});if(typeof customCount!=="undefined")customCount=mc;\n' +
     '}\n' +
     'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",restore);}else{restore();}\n' +
     '})();\n<\/script>';
@@ -1479,16 +1480,34 @@ async function savePDF(filename) {
   page.style.cssText = 'width:794px !important;max-width:794px !important;padding:20px 24px !important;margin:0 !important;box-shadow:none !important;';
   const saved = [];
   document.querySelectorAll('.room-inner,.room-left,.room-right').forEach(el => { saved.push({ el, style: el.getAttribute('style') || '' }); });
-  // テキストエリアの高さをスクロール分まで広げる（文字切れ対策）
-  const savedTa = [];
-  document.querySelectorAll('textarea').forEach(el => {
-    savedTa.push({ el, style: el.getAttribute('style') || '', h: el.style.height });
-    el.style.height = el.scrollHeight + 'px';
-    el.style.overflow = 'hidden';
-  });
+  // ★ まずレイアウトを2カラムに変更（テキストエリア高さ計算より先に行う）
   document.querySelectorAll('.room-inner').forEach(el => el.style.cssText = 'display:flex !important;flex-direction:row !important;');
   document.querySelectorAll('.room-left').forEach(el => el.style.cssText = 'flex:1 !important;border-bottom:none !important;border-right:1px solid #ddd !important;');
   document.querySelectorAll('.room-right').forEach(el => el.style.cssText = 'flex:1 !important;');
+  // input要素のオーバーフロー対策：長いテキストがはみ出すinputを一時的にdivで置換
+  const inputSubs = [];
+  document.querySelectorAll('input.cell, input.inline').forEach(el => {
+    if (!el.value) return;
+    void el.offsetWidth;
+    if (el.scrollWidth <= el.clientWidth + 2) return;
+    const cs = window.getComputedStyle(el);
+    const span = document.createElement('span');
+    span.textContent = el.value;
+    span.style.cssText = 'font-size:' + cs.fontSize + ';font-family:inherit;overflow-wrap:break-word;word-break:break-all;display:block;padding:2px 4px;';
+    el.style.display = 'none';
+    el.parentNode.insertBefore(span, el.nextSibling);
+    inputSubs.push({ el, span });
+  });
+  // レイアウト変更後にリフロー強制（scrollHeight計算を正確にするため）
+  void page.offsetHeight;
+  // ★ テキストエリアの高さを2カラム幅に合わせて再計算（文字切れ対策）
+  const savedTa = [];
+  document.querySelectorAll('textarea').forEach(el => {
+    savedTa.push({ el, style: el.getAttribute('style') || '', h: el.style.height });
+    el.style.height = 'auto';
+    el.style.overflow = 'hidden';
+    el.style.height = el.scrollHeight + 'px';
+  });
   try {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -1507,6 +1526,8 @@ async function savePDF(filename) {
     await addEl(document.querySelector('.header-info'));
     await addEl(document.getElementById('facility-name'));
     await addEl(document.querySelector('.section'));
+    const sec2Title = document.querySelectorAll('.section-title')[1];
+    if (sec2Title) await addEl(sec2Title);
     for (const block of document.querySelectorAll('.room-block')) await addEl(block);
     await addEl(document.querySelector('.page>div:last-of-type'));
     pdf.save((filename || '家屋調査報告書') + '.pdf');
@@ -1517,6 +1538,7 @@ async function savePDF(filename) {
     page.setAttribute('style', origStyle);
     saved.forEach(({ el, style }) => el.setAttribute('style', style));
     savedTa.forEach(({ el, style }) => el.setAttribute('style', style));
+    inputSubs.forEach(({ el, span }) => { el.style.display = ''; span.remove(); });
     document.querySelectorAll('.no-print').forEach(el => el.style.visibility = '');
     btns.forEach(b => b.disabled = false);
   }
